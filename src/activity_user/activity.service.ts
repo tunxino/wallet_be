@@ -125,15 +125,15 @@ export class ActivityService {
 
     dailyTotalsQuery
       .select([
-        'DATE(activity.date) AS day', // Group by day
+        'activity.date AS day',
         'SUM(CASE WHEN activity.type = :deposit THEN activity.amount ELSE 0 END) AS totalDepositAmount',
         'SUM(CASE WHEN activity.type = :withdrawal THEN activity.amount ELSE 0 END) AS totalWithdrawalAmount',
       ])
       .where('activity.userId = :userId', { userId })
       .andWhere('activity.date >= :startDate', { startDate })
       .andWhere('activity.date <= :endDate', { endDate })
-      .groupBy('day') // Group by day
-      .orderBy('day', 'DESC')
+      .groupBy('date')
+      .orderBy('date', 'DESC')
       .setParameters({
         deposit: 'DEPOSIT',
         withdrawal: 'WITHDRAWAL',

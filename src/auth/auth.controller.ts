@@ -12,6 +12,7 @@ import {
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { LoggingInterceptor } from '../common/logging.interceptor';
+import { ResponseBase } from "../users/base.entity";
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('auth')
@@ -20,13 +21,13 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) {
+  signIn(@Body() signInDto: Record<string, any>) : Promise<ResponseBase>  {
     return this.authService.signIn(signInDto.username, signInDto.password);
   }
 
   @UseGuards(AuthGuard)
-  @Get('profile')
-  getProfile(@Request() req) {
+  @Post('profile')
+  getProfile(@Request() req): Promise<ResponseBase> {
     return req.user;
   }
 }

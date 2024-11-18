@@ -6,10 +6,11 @@ import {
   Param,
   Delete,
   UseInterceptors,
+  HttpStatus,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
-import { ResponseBase } from './base.entity';
+import { ResponseBase, VerifyOtpDto } from './base.entity';
 import { LoggingInterceptor } from '../common/logging.interceptor';
 
 @UseInterceptors(new LoggingInterceptor())
@@ -32,8 +33,16 @@ export class UsersController {
     return this.usersService.create(user);
   }
 
-  @Delete(':id')
-  remove(@Param('id') id: string): Promise<void> {
-    return this.usersService.remove(+id);
+  @Post('verifyOTP')
+  async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
+    const { email, otp } = verifyOtpDto;
+    const isVerified = await this.usersService.verifyOtp(email, otp);
+    if (isVerified) {
+      return {
+        message: 'OTP verified successfully, login complete',
+        code: HttpStatus.OK,
+      };
+    }
+    return { message: 'Invalid or expired OTP', code: HttpStatus.NOT_FOUND };
   }
 }
