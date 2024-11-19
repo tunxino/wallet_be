@@ -1,4 +1,9 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from "typeorm";
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class User {
@@ -18,10 +23,10 @@ export class User {
   isActive: boolean;
 
   @Column({ nullable: true })
-  otp: string;  // OTP for email verification
+  otp: string;
 
   @Column({ nullable: true })
-  otpExpires: Date;  // Expiration time for OTP
+  otpExpires: Date;
 
   @CreateDateColumn()
   createdAt: Date;

@@ -5,9 +5,37 @@ export enum ActivityType {
 
 // Define an enum for 'category' to restrict values
 export enum ActivityCategory {
-  REWARD = 'EAT',
-  PAYMENT = 'PAYMENT',
-  REFUND = 'REFUND',
-  PURCHASE = 'PURCHASE',
+  EAT = 'EAT',
+  TRAVEL = 'TRAVEL',
+  SHOPPING = 'SHOPPING',
+  FOOD = 'FOOD',
+  PHONE = 'PHONE',
+  ENTERTAINMENT = 'ENTERTAINMENT',
+  EDUCATION = 'EDUCATION',
+  BEAUTY = 'BEAUTY',
+  SPORT = 'SPORT',
+  SOCIETY = 'SOCIETY',
+  TRANSPORTATION = 'TRANSPORTATION',
+  CLOTHES = 'CLOTHES',
+  CAR = 'CAR',
+  DRINKS = 'DRINKS',
+  CIGARETTE = 'CIGARETTE',
+  ELECTRONICS = 'ELECTRONICS',
+  HEALTH = 'HEALTH',
+  PETS = 'PETS',
+  REPAIR = 'REPAIR',
+  HOUSING = 'HOUSING',
+  GIFT = 'GIFT',
+  DONATE = 'DONATE',
+  LOTTERY = 'LOTTERY',
+  CHILDREN = 'CHILDREN',
+  FRUIT = 'FRUIT',
+}
+
+export enum ActivityCategoryWithdraw {
   SALARY = 'SALARY',
+  INVESTMENT = 'INVESTMENT',
+  PARTTIME = 'PARTTIME',
+  PRIZE = 'PRIZE',
+  OTHER = 'OTHER',
 }

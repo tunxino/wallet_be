@@ -10,6 +10,7 @@ import {
 } from './activity.dto';
 import { ResponseBase } from '../users/base.entity';
 import { ActivityType } from './activity.enum';
+import { format } from 'date-fns';
 
 @Injectable()
 export class ActivityService {
@@ -87,7 +88,8 @@ export class ActivityService {
     userId: string,
   ): Promise<ResponseBase> {
     const { startDate, endDate } = filterDto;
-
+    let totalDepositResult: number = 0;
+    let totalWithdrawResult: number = 0;
     // Build the query
     const query = this.activityRepository.createQueryBuilder('activity');
 
@@ -101,13 +103,14 @@ export class ActivityService {
       query.andWhere('activity.date <= :endDate', { endDate });
     }
     query.orderBy('activity.date', 'DESC');
-    const activities = await query.getMany();
-
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let totalDepositResult: number = 0;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let totalWithdrawResult: number = 0;
-
+    const activitiesRaw = await query.getMany();
+    const activities = activitiesRaw.map((activity) => {
+      const formattedDate = format(activity.date, 'yyyy-MM-dd');
+      return {
+        ...activity,
+        date: formattedDate,
+      };
+    });
     activities
       .filter((item) => item.type === ActivityType.DEPOSIT)
       .forEach((item) => {
@@ -120,26 +123,24 @@ export class ActivityService {
         totalWithdrawResult += item.amount;
       });
 
-    const dailyTotalsQuery =
-      this.activityRepository.createQueryBuilder('activity');
+    const dailyTotalsArray = activities.reduce((acc, activity) => {
+      const day = activity.date;
+      if (!acc[day]) {
+        acc[day] = {
+          day: day,
+          totaldepositamount: 0,
+          totalwithdrawalamount: 0,
+        };
+      }
+      if (activity.type === 'DEPOSIT') {
+        acc[day].totaldepositamount += activity.amount;
+      } else if (activity.type === 'WITHDRAWAL') {
+        acc[day].totalwithdrawalamount += activity.amount;
+      }
 
-    dailyTotalsQuery
-      .select([
-        'activity.date AS day',
-        'SUM(CASE WHEN activity.type = :deposit THEN activity.amount ELSE 0 END) AS totalDepositAmount',
-        'SUM(CASE WHEN activity.type = :withdrawal THEN activity.amount ELSE 0 END) AS totalWithdrawalAmount',
-      ])
-      .where('activity.userId = :userId', { userId })
-      .andWhere('activity.date >= :startDate', { startDate })
-      .andWhere('activity.date <= :endDate', { endDate })
-      .groupBy('date')
-      .orderBy('date', 'DESC')
-      .setParameters({
-        deposit: 'DEPOSIT',
-        withdrawal: 'WITHDRAWAL',
-      });
-
-    const dailyTotals = await dailyTotalsQuery.getRawMany();
+      return acc.valueOf();
+    }, {});
+    const dailyTotals = Object.values(dailyTotalsArray);
 
     return {
       message: 'successfully',

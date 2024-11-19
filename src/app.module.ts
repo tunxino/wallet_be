@@ -12,6 +12,7 @@ import { ActivityModule } from './activity_user/activity.module';
 import { APP_INTERCEPTOR } from '@nestjs/core';
 import { LoggingInterceptor } from './common/logging.interceptor';
 import { FundModule } from './fund/fund.module';
+import { CategoryModule } from './category/category.module';
 
 @Module({
   imports: [
@@ -43,6 +44,7 @@ import { FundModule } from './fund/fund.module';
     AuthModule,
     UsersModule,
     ActivityModule,
+    CategoryModule,
     FundModule,
   ],
   controllers: [AppController, CatsController],

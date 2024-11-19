@@ -7,6 +7,12 @@ import * as bcrypt from 'bcrypt';
 import * as nodemailer from 'nodemailer';
 import { ConfigService } from '@nestjs/config';
 import * as crypto from 'crypto';
+import {
+  ActivityCategory,
+  ActivityCategoryWithdraw,
+  ActivityType,
+} from '../activity_user/activity.enum';
+import { Category } from '../category/category.entity';
 
 @Injectable()
 export class UsersService {
@@ -15,6 +21,8 @@ export class UsersService {
   constructor(
     @InjectRepository(User)
     private usersRepository: Repository<User>,
+    @InjectRepository(Category)
+    private categoryRepository: Repository<Category>,
     private readonly configService: ConfigService,
   ) {
     this.transporter = nodemailer.createTransport({
@@ -32,12 +40,31 @@ export class UsersService {
     return this.usersRepository.find();
   }
 
+  async delete() {
+    return this.usersRepository.delete({});
+  }
+
   findOne(email: string): Promise<User> {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-  findOneByID(id: number): Promise<User> {
-    return this.usersRepository.findOne({ where: { id } });
+  async findOneByID(id: number): Promise<ResponseBase> {
+    const user = await this.usersRepository.findOne({ where: { id } });
+    const categories = await this.categoryRepository.find({
+      where: { userId: id },
+    });
+
+    return {
+      message: 'successfully',
+      code: HttpStatus.OK,
+      data: {
+        id: user.id,
+        name: user.name,
+        email: user.email,
+        active: user.isActive,
+        categories: categories,
+      },
+    };
   }
 
   async create(user: Partial<User>): Promise<ResponseBase> {
@@ -63,6 +90,28 @@ export class UsersService {
     await this.usersRepository.save(newUser);
     await this.sendOtpEmail(user.email, otp);
 
+    const depositCategories = Object.values(ActivityCategory).map(
+      (category) => ({
+        userId: newUser.id,
+        category: category,
+        type: ActivityType.DEPOSIT,
+        title: category,
+        icon: `${category.toLowerCase()}.png`,
+      }),
+    );
+
+    const withdrawCategories = Object.values(ActivityCategoryWithdraw).map(
+      (category) => ({
+        userId: newUser.id,
+        category: category,
+        type: ActivityType.WITHDRAWAL,
+        title: category,
+        icon: `${category.toLowerCase()}.png`,
+      }),
+    );
+    const allCategories = [...depositCategories, ...withdrawCategories];
+    const categories = this.categoryRepository.create(allCategories);
+    await this.categoryRepository.save(categories);
     return {
       message: 'User created successfully',
       code: HttpStatus.CREATED,

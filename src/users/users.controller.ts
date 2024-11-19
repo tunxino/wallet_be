@@ -3,15 +3,16 @@ import {
   Get,
   Post,
   Body,
-  Param,
-  Delete,
+  Request,
   UseInterceptors,
   HttpStatus,
+  UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { ResponseBase, VerifyOtpDto } from './base.entity';
 import { LoggingInterceptor } from '../common/logging.interceptor';
+import { AuthGuard } from '../auth/auth.guard';
 
 @UseInterceptors(new LoggingInterceptor())
 @Controller('users')
@@ -23,14 +24,20 @@ export class UsersController {
     return this.usersService.findAll();
   }
 
-  @Get(':id')
-  findOne(@Param('id') id: number): Promise<User> {
-    return this.usersService.findOneByID(id);
+  @UseGuards(AuthGuard)
+  @Post('getProfile')
+  findOne(@Request() req): Promise<ResponseBase> {
+    return this.usersService.findOneByID(req.user.id);
   }
 
   @Post('register')
   create(@Body() user: Partial<User>): Promise<ResponseBase> {
     return this.usersService.create(user);
+  }
+
+  @Post('delete')
+  delete() {
+    return this.usersService.delete();
   }
 
   @Post('verifyOTP')
