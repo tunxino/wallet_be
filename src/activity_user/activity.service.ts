@@ -23,7 +23,7 @@ export class ActivityService {
     createActivityDto: CreateActivityDto,
     userId: number,
   ): Promise<ResponseBase> {
-    const { category, amount, type, date, note } = createActivityDto;
+    const { category, amount, type, date, note, icon } = createActivityDto;
 
     // Create a new activity entity with the provided data
     const newActivity = this.activityRepository.create({
@@ -33,6 +33,7 @@ export class ActivityService {
       category,
       userId,
       note,
+      icon,
     });
 
     // Save the new activity entity to the database
@@ -180,27 +181,12 @@ export class ActivityService {
     }
 
     const activities = await query.getMany();
-
-    const categoryQuery =
-      this.activityRepository.createQueryBuilder('activity');
-
-    // Apply the same filters to the total amount query
-    if (userId) {
-      categoryQuery.andWhere('activity.userId = :userId', { userId });
-    }
-    if (startDate) {
-      categoryQuery.andWhere('activity.date >= :startDate', { startDate });
-    }
-    if (endDate) {
-      categoryQuery.andWhere('activity.date <= :endDate', { endDate });
-    }
-
-    categoryQuery.andWhere(`activity.type = :type`, { type });
-
-    const totalByCategory = await categoryQuery
+    const totalByCategory = await query
       .select('activity.category', 'category')
       .addSelect('SUM(activity.amount)', 'totalAmount')
+      .addSelect('activity.icon', 'icon') // Select the icon
       .groupBy('activity.category')
+      .addGroupBy('activity.icon')
       .getRawMany();
 
     // eslint-disable-next-line @typescript-eslint/no-unused-vars

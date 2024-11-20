@@ -17,6 +17,9 @@ export class Activity {
   @Column()
   category: string;
 
+  @Column({ nullable: true })
+  icon: string;
+
   @Column()
   amount: number;
 

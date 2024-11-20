@@ -17,6 +17,9 @@ export class CreateActivityDto {
   @IsEnum(ActivityCategory)
   category: ActivityCategory;
 
+  @IsString()
+  icon: string;
+
   @IsNumber()
   amount: number;
 
