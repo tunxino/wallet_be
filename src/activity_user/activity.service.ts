@@ -11,21 +11,42 @@ import {
 import { ResponseBase } from '../users/base.entity';
 import { ActivityType } from './activity.enum';
 import { format } from 'date-fns';
+import { Wallet } from '../wallet/wallet.entity';
 
 @Injectable()
 export class ActivityService {
   constructor(
     @InjectRepository(Activity)
     private activityRepository: Repository<Activity>,
+    @InjectRepository(Wallet)
+    private walletRepository: Repository<Wallet>,
   ) {}
 
   async create(
     createActivityDto: CreateActivityDto,
     userId: number,
   ): Promise<ResponseBase> {
-    const { category, amount, type, date, note, icon } = createActivityDto;
+    const { category, amount, type, date, note, icon, walletId } =
+      createActivityDto;
 
-    // Create a new activity entity with the provided data
+    const wallet = await this.walletRepository.findOneBy({
+      id: walletId,
+    });
+    const walletType = wallet.type;
+
+    if (type === ActivityType.WITHDRAWAL) {
+      wallet.amount += amount;
+    } else {
+      if (wallet.amount - amount < 0) {
+        return {
+          message: 'Wallet does not have enough money!',
+          code: HttpStatus.NOT_FOUND,
+        };
+      } else {
+        wallet.amount -= amount;
+      }
+    }
+
     const newActivity = this.activityRepository.create({
       amount,
       type,
@@ -34,9 +55,11 @@ export class ActivityService {
       userId,
       note,
       icon,
+      walletId,
+      walletType,
     });
 
-    // Save the new activity entity to the database
+    await this.walletRepository.save(wallet);
     await this.activityRepository.save(newActivity);
     return {
       message: 'User created successfully',
@@ -70,6 +93,10 @@ export class ActivityService {
       code: HttpStatus.CREATED,
     };
   }
+
+  // async deleteAll() {
+  //   return this.activityRepository.delete({});
+  // }
 
   async delete(id: string): Promise<ResponseBase> {
     // Try to find the activity by ID
@@ -143,12 +170,33 @@ export class ActivityService {
     }, {});
     const dailyTotals = Object.values(dailyTotalsArray);
 
+    const monthlyTotalsArray = activities.reduce((acc, activity) => {
+      const month = format(new Date(activity.date), 'yyyy-MM'); // Format to get the month as "yyyy-MM"
+      if (!acc[month]) {
+        acc[month] = {
+          day: month,
+          totaldepositamount: 0,
+          totalwithdrawalamount: 0,
+        };
+      }
+      if (activity.type === 'DEPOSIT') {
+        acc[month].totaldepositamount += activity.amount;
+      } else if (activity.type === 'WITHDRAWAL') {
+        acc[month].totalwithdrawalamount += activity.amount;
+      }
+
+      return acc;
+    }, {});
+
+    const monthlyTotals = Object.values(monthlyTotalsArray);
+
     return {
       message: 'successfully',
       code: HttpStatus.OK,
       data: {
         activities,
         dailyTotals,
+        monthlyTotals,
         totalDepositResult,
         totalWithdrawResult,
       },

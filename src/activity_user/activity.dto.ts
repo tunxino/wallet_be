@@ -8,8 +8,8 @@ import {
 import { ActivityCategory, ActivityType } from './activity.enum';
 
 export class CreateActivityDto {
-  // @IsInt()
-  // userId: number;
+  @IsString()
+  walletId: string;
 
   @IsEnum(ActivityType)
   type: ActivityType;

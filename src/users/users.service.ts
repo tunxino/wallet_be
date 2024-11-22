@@ -13,6 +13,8 @@ import {
   ActivityType,
 } from '../activity_user/activity.enum';
 import { Category } from '../category/category.entity';
+import { Wallet } from '../wallet/wallet.entity';
+import { WalletType } from '../wallet/wallet.enum';
 
 @Injectable()
 export class UsersService {
@@ -23,6 +25,8 @@ export class UsersService {
     private usersRepository: Repository<User>,
     @InjectRepository(Category)
     private categoryRepository: Repository<Category>,
+    @InjectRepository(Wallet)
+    private walletRepository: Repository<Wallet>,
     private readonly configService: ConfigService,
   ) {
     this.transporter = nodemailer.createTransport({
@@ -53,6 +57,9 @@ export class UsersService {
     const categories = await this.categoryRepository.find({
       where: { userId: id },
     });
+    const wallets = await this.walletRepository.find({
+      where: { userId: id },
+    });
 
     return {
       message: 'successfully',
@@ -62,6 +69,7 @@ export class UsersService {
         name: user.name,
         email: user.email,
         active: user.isActive,
+        wallets: wallets,
         categories: categories,
       },
     };
@@ -89,7 +97,7 @@ export class UsersService {
     });
     await this.usersRepository.save(newUser);
     await this.sendOtpEmail(user.email, otp);
-
+    // create category
     const depositCategories = Object.values(ActivityCategory).map(
       (category) => ({
         userId: newUser.id,
@@ -112,6 +120,19 @@ export class UsersService {
     const allCategories = [...depositCategories, ...withdrawCategories];
     const categories = this.categoryRepository.create(allCategories);
     await this.categoryRepository.save(categories);
+
+    // create wallet
+    const walletAccount = this.walletRepository.create({
+      userId: newUser.id,
+      accountName: newUser.name,
+      type: WalletType.BANK,
+      isDefault: true,
+      currency: 'vnd',
+      icon: 'BANK',
+      amount: 0,
+    });
+    await this.walletRepository.save(walletAccount);
+
     return {
       message: 'User created successfully',
       code: HttpStatus.CREATED,

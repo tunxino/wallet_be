@@ -1,5 +1,5 @@
-import { Column, Entity, ManyToOne, PrimaryGeneratedColumn } from "typeorm";
-import { ActivityType } from "../activity_user/activity.enum";
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { ActivityType } from '../activity_user/activity.enum';
 
 @Entity()
 export class Category {

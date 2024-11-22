@@ -1,12 +1,23 @@
-import { Entity, Column, PrimaryGeneratedColumn, CreateDateColumn } from 'typeorm';
+import {
+  Entity,
+  Column,
+  PrimaryGeneratedColumn,
+  CreateDateColumn,
+} from 'typeorm';
 
 @Entity()
 export class Activity {
   @Column()
   userId: number;
 
+  @Column()
+  walletId: string;
+
   @PrimaryGeneratedColumn('uuid')
   id: string;
+
+  @Column()
+  walletType: string;
 
   @Column()
   type: string;

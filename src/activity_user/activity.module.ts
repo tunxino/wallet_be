@@ -4,9 +4,10 @@ import { ActivityService } from './activity.service';
 import { ActivityController } from './activity.controller';
 import { Activity } from './activity.entity';
 import { FirebaseService } from '../firebase/firebase.service';
+import { Wallet } from "../wallet/wallet.entity";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Activity])],
+  imports: [TypeOrmModule.forFeature([Activity, Wallet])],
   providers: [ActivityService, FirebaseService],
   controllers: [ActivityController],
   exports: [ActivityService],
