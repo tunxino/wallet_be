@@ -34,6 +34,9 @@ export class Activity {
   @Column()
   amount: number;
 
+  @Column({ nullable: true })
+  imageUrl: string;
+
   @CreateDateColumn({ type: 'timestamp' })
   date: Date;
 }

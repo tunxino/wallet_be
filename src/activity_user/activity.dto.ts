@@ -28,6 +28,8 @@ export class CreateActivityDto {
 
   @IsDateString()
   date: string;
+
+  imageUrl?: string;
 }
 
 export class UpdateActivityDto {

@@ -26,7 +26,7 @@ export class ActivityService {
     createActivityDto: CreateActivityDto,
     userId: number,
   ): Promise<ResponseBase> {
-    const { category, amount, type, date, note, icon, walletId } =
+    const { category, amount, type, date, note, icon, walletId, imageUrl } =
       createActivityDto;
 
     const wallet = await this.walletRepository.findOneBy({
@@ -57,6 +57,7 @@ export class ActivityService {
       icon,
       walletId,
       walletType,
+      imageUrl,
     });
 
     await this.walletRepository.save(wallet);

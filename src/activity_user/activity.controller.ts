@@ -6,6 +6,7 @@ import {
   UseGuards,
   Request,
   UseInterceptors,
+  UploadedFile,
 } from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import {
@@ -18,6 +19,17 @@ import {
 import { AuthGuard } from '../auth/auth.guard';
 import { ResponseBase } from '../users/base.entity';
 import { LoggingInterceptor } from '../common/logging.interceptor';
+import { diskStorage } from 'multer';
+import { extname } from 'path';
+import { FileInterceptor } from '@nestjs/platform-express';
+
+const storage = diskStorage({
+  destination: './uploads/images',
+  filename: (req, file, callback) => {
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
+    callback(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
+  },
+});
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('activity')
@@ -27,10 +39,16 @@ export class ActivityController {
   // POST route to create a new activity
   @UseGuards(AuthGuard)
   @Post()
+  @UseInterceptors(FileInterceptor('image', { storage }))
   async create(
     @Body() createActivityDto: CreateActivityDto,
+    @UploadedFile() image: Express.Multer.File,
     @Request() req,
   ): Promise<ResponseBase> {
+    if (image) {
+      createActivityDto.imageUrl = `/uploads/images/${image.filename}`;
+    }
+
     return this.activityService.create(createActivityDto, req.user.id);
   }
 
