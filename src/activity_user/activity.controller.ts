@@ -14,6 +14,7 @@ import {
   DeleteActivityDto,
   GetActivitiesByDateRangeDto,
   GetActivitiesChartDateRangeDto,
+  GetWalletActivityDto,
   UpdateActivityDto,
 } from './activity.dto';
 import { AuthGuard } from '../auth/auth.guard';
@@ -22,12 +23,16 @@ import { LoggingInterceptor } from '../common/logging.interceptor';
 import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
+import { Activity } from './activity.entity';
 
 const storage = diskStorage({
   destination: './uploads/images',
   filename: (req, file, callback) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    callback(null, file.fieldname + '-' + uniqueSuffix + extname(file.originalname));
+    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
+    callback(
+      null,
+      file.fieldname + '-' + uniqueSuffix + extname(file.originalname),
+    );
   },
 });
 
@@ -72,6 +77,18 @@ export class ActivityController {
   // async deleteAll() {
   //   return this.activityService.deleteAll();
   // }
+
+  @UseGuards(AuthGuard)
+  @Post('getActivityByWalletId')
+  async getActivityByWalletId(
+    @Body() getWalletActivityDto: GetWalletActivityDto,
+    @Request() req,
+  ): Promise<ResponseBase> {
+    return this.activityService.getActivitiesByUserAndWallet(
+      req.user.id,
+      getWalletActivityDto.walletId,
+    );
+  }
 
   @UseGuards(AuthGuard)
   @Post('getActivity')

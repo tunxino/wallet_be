@@ -35,7 +35,7 @@ export class ActivityService {
     const walletType = wallet.type;
 
     if (type === ActivityType.WITHDRAWAL) {
-      wallet.amount += amount;
+      wallet.amount = Number(wallet.amount) + Number(amount);
     } else {
       if (wallet.amount - amount < 0) {
         return {
@@ -43,7 +43,7 @@ export class ActivityService {
           code: HttpStatus.NOT_FOUND,
         };
       } else {
-        wallet.amount -= amount;
+        wallet.amount = Number(wallet.amount) - Number(amount);
       }
     }
 
@@ -263,6 +263,26 @@ export class ActivityService {
         totalDepositResult,
         totalWithdrawResult,
         totalByCategory,
+      },
+    };
+  }
+
+  async getActivitiesByUserAndWallet(
+    userId: number,
+    walletId: string,
+  ): Promise<ResponseBase> {
+    const query = await this.activityRepository.find({
+      where: { userId, walletId },
+      order: { date: 'DESC' },
+    });
+
+    const activities = Object.values(query);
+
+    return {
+      message: 'successfully',
+      code: HttpStatus.OK,
+      data: {
+        activities,
       },
     };
   }

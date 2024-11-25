@@ -58,6 +58,11 @@ export class DeleteActivityDto {
   id: string;
 }
 
+export class GetWalletActivityDto {
+  @IsString()
+  walletId: string;
+}
+
 export class TypeActivityDto {
   @IsEnum(ActivityType)
   type: ActivityType;
