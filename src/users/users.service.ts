@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -15,10 +15,16 @@ import {
 import { Category } from '../category/category.entity';
 import { Wallet } from '../wallet/wallet.entity';
 import { WalletType } from '../wallet/wallet.enum';
+import { OAuth2Client } from 'google-auth-library';
+import { SocialLoginDto } from './users.dto';
+import { AuthService } from '../auth/auth.service';
+import { generatePassword } from '../Utils/string.utils';
+import axios from "axios";
 
 @Injectable()
 export class UsersService {
   private transporter: nodemailer.Transporter;
+  private googleClient: OAuth2Client;
 
   constructor(
     @InjectRepository(User)
@@ -28,6 +34,8 @@ export class UsersService {
     @InjectRepository(Wallet)
     private walletRepository: Repository<Wallet>,
     private readonly configService: ConfigService,
+    @Inject(forwardRef(() => AuthService))
+    private readonly authService: AuthService,
   ) {
     this.transporter = nodemailer.createTransport({
       host: this.configService.get<string>('MAIL_HOST'),
@@ -38,6 +46,101 @@ export class UsersService {
         pass: this.configService.get<string>('MAIL_PASS'),
       },
     });
+    this.googleClient = new OAuth2Client(
+      this.configService.get<string>('GOOGLE_CLIENT_ID'),
+    );
+  }
+
+  async createWithGoogle(
+    socialLoginDto: SocialLoginDto,
+  ): Promise<ResponseBase> {
+    try {
+      const ticket = await this.googleClient.verifyIdToken({
+        idToken: socialLoginDto.token,
+        audience: this.configService.get<string>('GOOGLE_CLIENT_ID'),
+      });
+      const payload = ticket.getPayload();
+      if (payload.email !== socialLoginDto.email) {
+        throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
+      }
+      const user = await this.findOne(socialLoginDto.email);
+      if (user != null) {
+        return await this.authService.signInGoogle(user);
+      } else {
+        const newUser = await this.createBySocial(payload.email, payload.name);
+        return await this.authService.signInGoogle(newUser);
+      }
+    } catch (error) {
+      console.error('error.............', error);
+      throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+
+  async createWithFacebook(socialLoginDto: SocialLoginDto): Promise<ResponseBase> {
+    try {
+      const user = await this.findOne(socialLoginDto.email);
+      if (user != null) {
+        return await this.authService.signInGoogle(user);
+      } else {
+        const newUser = await this.createBySocial(socialLoginDto.email, socialLoginDto.name);
+        return await this.authService.signInGoogle(newUser);
+      }
+    } catch (error) {
+      console.log('error.............',error);
+      throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+
+
+  async createBySocial(email: string, name: string): Promise<User> {
+    const password = generatePassword();
+    const hashedPassword = await bcrypt.hash(password, 10);
+    const newUser = this.usersRepository.create({
+      name: name,
+      email: email,
+      password: hashedPassword,
+      isActive: true,
+    });
+    await this.usersRepository.save(newUser);
+
+    const depositCategories = Object.values(ActivityCategory).map(
+      (category) => ({
+        userId: newUser.id,
+        category: category,
+        type: ActivityType.DEPOSIT,
+        title: category,
+        icon: `${category.toLowerCase()}.png`,
+      }),
+    );
+
+    const withdrawCategories = Object.values(ActivityCategoryWithdraw).map(
+      (category) => ({
+        userId: newUser.id,
+        category: category,
+        type: ActivityType.WITHDRAWAL,
+        title: category,
+        icon: `${category.toLowerCase()}.png`,
+      }),
+    );
+    const allCategories = [...depositCategories, ...withdrawCategories];
+    const categories = this.categoryRepository.create(allCategories);
+    await this.categoryRepository.save(categories);
+
+    // create wallet
+    const walletAccount = this.walletRepository.create({
+      userId: newUser.id,
+      accountName: newUser.name,
+      type: WalletType.BANK,
+      isDefault: true,
+      currency: 'vnd',
+      icon: 'BANK',
+      amount: 0,
+    });
+    await this.walletRepository.save(walletAccount);
+
+    return newUser;
   }
 
   findAll(): Promise<User[]> {

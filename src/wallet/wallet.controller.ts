@@ -20,4 +20,10 @@ export class WalletController {
   async getWalletByUserId(@Request() req): Promise<Wallet[]> {
     return this.walletService.getWalletByUserID(req.user.id);
   }
+
+
+  @Post('deleteAll')
+  async deleteAll() {
+    return this.walletService.deleteAll();
+  }
 }

@@ -95,9 +95,9 @@ export class ActivityService {
     };
   }
 
-  // async deleteAll() {
-  //   return this.activityRepository.delete({});
-  // }
+  async deleteAll() {
+    return this.activityRepository.delete({});
+  }
 
   async delete(id: string): Promise<ResponseBase> {
     // Try to find the activity by ID

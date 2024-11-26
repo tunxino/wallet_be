@@ -6,10 +6,12 @@ import { UsersController } from './users.controller';
 import { Category } from '../category/category.entity';
 import { CategoryModule } from '../category/category.module';
 import { Wallet } from "../wallet/wallet.entity";
+import { AuthModule } from "../auth/auth.module";
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([User, Category, Wallet]),
+    forwardRef(() => AuthModule),
     forwardRef(() => CategoryModule),
   ],
   providers: [UsersService],

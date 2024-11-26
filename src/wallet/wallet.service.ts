@@ -13,4 +13,9 @@ export class WalletService {
   async getWalletByUserID(userId: number): Promise<Wallet[]> {
     return this.walletRepository.find({ where: { userId: userId } });
   }
+
+
+  async deleteAll() {
+    return this.walletRepository.delete({});
+  }
 }

@@ -13,6 +13,7 @@ import { User } from './user.entity';
 import { ResponseBase, VerifyOtpDto } from './base.entity';
 import { LoggingInterceptor } from '../common/logging.interceptor';
 import { AuthGuard } from '../auth/auth.guard';
+import { SocialLoginDto } from "./users.dto";
 
 @UseInterceptors(new LoggingInterceptor())
 @Controller('users')
@@ -38,6 +39,16 @@ export class UsersController {
   @Post('delete')
   delete() {
     return this.usersService.delete();
+  }
+
+  @Post('register/google')
+  async createWithGoogle(@Body() socialLoginDto: SocialLoginDto): Promise<ResponseBase> {
+    return this.usersService.createWithGoogle(socialLoginDto);
+  }
+
+  @Post('register/facebook')
+  async createWithFacebook(@Body() socialLoginDto: SocialLoginDto): Promise<ResponseBase> {
+    return this.usersService.createWithFacebook(socialLoginDto);
   }
 
   @Post('verifyOTP')

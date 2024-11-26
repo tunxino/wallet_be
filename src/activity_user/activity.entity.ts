@@ -31,7 +31,7 @@ export class Activity {
   @Column({ nullable: true })
   icon: string;
 
-  @Column()
+  @Column({type: 'double precision',})
   amount: number;
 
   @Column({ nullable: true })

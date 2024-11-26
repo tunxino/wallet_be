@@ -22,7 +22,7 @@ export class FundEntity {
   @Column()
   currentAmount: number;
 
-  @Column()
+  @Column({type:'double precision'})
   amount: number;
 
   @Column({

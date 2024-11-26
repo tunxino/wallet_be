@@ -18,7 +18,7 @@ export class Wallet {
   @Column()
   accountName: string;
 
-  @Column()
+  @Column({ type: 'double precision' })
   amount: number;
 
   @Column()
