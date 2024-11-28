@@ -1,9 +1,9 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Wallet } from './wallet.entity';
 import { ResponseBase } from '../users/base.entity';
-import { WalletDto } from './wallet.dto';
+import { WalletDto, WalletEditDto } from './wallet.dto';
 
 @Injectable()
 export class WalletService {
@@ -29,7 +29,47 @@ export class WalletService {
       icon: walletDto.type,
       amount: 0,
     });
+
+    if (walletDto.isDefault === true) {
+      const walletUser = await this.walletRepository.find({
+        where: { userId: userId },
+      });
+      walletUser.forEach((item) => {
+        item.isDefault = false;
+      });
+      await this.walletRepository.save(walletUser);
+    }
+
     await this.walletRepository.save(walletAccount);
+    return {
+      message: 'Create wallet successfully',
+      code: HttpStatus.CREATED,
+    };
+  }
+
+  async updateWallet(walletEditDto: WalletEditDto): Promise<ResponseBase> {
+    const wallet = await this.walletRepository.findOneBy({
+      id: walletEditDto.id,
+    });
+    if (!wallet) {
+      throw new NotFoundException(
+        `Wallet with ID ${walletEditDto.id} not found`,
+      );
+    }
+
+    if (walletEditDto.accountName) {
+      wallet.accountName = walletEditDto.accountName;
+    }
+    if (walletEditDto.type) {
+      wallet.type = walletEditDto.type;
+    }
+    if (walletEditDto.currency) {
+      wallet.currency = walletEditDto.currency;
+    }
+    if (walletEditDto.isDefault) {
+      wallet.isDefault = walletEditDto.isDefault;
+    }
+    await this.walletRepository.save(wallet);
     return {
       message: 'Create wallet successfully',
       code: HttpStatus.CREATED,

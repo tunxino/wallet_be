@@ -171,6 +171,7 @@ export class UsersService {
     const wallets = await this.walletRepository.find({
       where: { userId: id },
     });
+    wallets.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
 
     return {
       message: 'successfully',

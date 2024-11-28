@@ -11,7 +11,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { WalletService } from './wallet.service';
 import { Wallet } from './wallet.entity';
 import { ResponseBase } from '../users/base.entity';
-import { WalletDto } from './wallet.dto';
+import { WalletDto, WalletEditDto } from "./wallet.dto";
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('wallet')
@@ -31,6 +31,14 @@ export class WalletController {
     @Request() req,
   ): Promise<ResponseBase> {
     return this.walletService.createWallet(req.user.id, walletDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('update')
+  async updateWallet(
+    @Body() walletEditDto: WalletEditDto,
+  ): Promise<ResponseBase> {
+    return this.walletService.updateWallet(walletEditDto);
   }
 
   @Post('deleteAll')

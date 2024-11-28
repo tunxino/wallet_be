@@ -1,4 +1,4 @@
-import { IsNotEmpty, IsString, IsEmail } from 'class-validator';
+import { IsBoolean, IsNotEmpty, IsOptional, IsString } from "class-validator";
 
 export class WalletDto {
   @IsNotEmpty()
@@ -14,6 +14,29 @@ export class WalletDto {
   currency: string;
 
   @IsNotEmpty()
+  @IsBoolean()
+  isDefault: boolean;
+}
+
+
+export class WalletEditDto {
+  @IsNotEmpty()
   @IsString()
+  id: string;
+
+  @IsOptional()
+  @IsString()
+  accountName: string;
+
+  @IsOptional()
+  @IsString()
+  type: string;
+
+  @IsOptional()
+  @IsString()
+  currency: string;
+
+  @IsOptional()
+  @IsBoolean()
   isDefault: boolean;
 }
