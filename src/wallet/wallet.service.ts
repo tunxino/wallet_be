@@ -47,7 +47,10 @@ export class WalletService {
     };
   }
 
-  async updateWallet(walletEditDto: WalletEditDto): Promise<ResponseBase> {
+  async updateWallet(
+    walletEditDto: WalletEditDto,
+    userId: number,
+  ): Promise<ResponseBase> {
     const wallet = await this.walletRepository.findOneBy({
       id: walletEditDto.id,
     });
@@ -66,8 +69,17 @@ export class WalletService {
     if (walletEditDto.currency) {
       wallet.currency = walletEditDto.currency;
     }
-    if (walletEditDto.isDefault) {
+    if (walletEditDto.isDefault !== null) {
       wallet.isDefault = walletEditDto.isDefault;
+      if (walletEditDto.isDefault === true) {
+        const walletUser = await this.walletRepository.find({
+          where: { userId: userId },
+        });
+        walletUser.forEach((item) => {
+          item.isDefault = false;
+        });
+        await this.walletRepository.save(walletUser);
+      }
     }
     await this.walletRepository.save(wallet);
     return {

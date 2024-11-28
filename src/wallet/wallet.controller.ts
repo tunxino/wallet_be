@@ -37,8 +37,9 @@ export class WalletController {
   @Post('update')
   async updateWallet(
     @Body() walletEditDto: WalletEditDto,
+    @Request() req,
   ): Promise<ResponseBase> {
-    return this.walletService.updateWallet(walletEditDto);
+    return this.walletService.updateWallet(walletEditDto, req.user.id);
   }
 
   @Post('deleteAll')
