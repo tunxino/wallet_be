@@ -6,6 +6,7 @@ import {
   IsOptional,
 } from 'class-validator';
 import { ActivityCategory, ActivityType } from './activity.enum';
+import { Type } from "class-transformer";
 
 export class CreateActivityDto {
   @IsString()
@@ -37,16 +38,21 @@ export class UpdateActivityDto {
   id: string;
 
   @IsOptional()
-  @IsEnum(ActivityType)
-  type?: ActivityType;
+  @IsString()
+  type?: string;
 
   @IsOptional()
-  @IsEnum(ActivityCategory)
-  category?: ActivityCategory;
+  @IsString()
+  category?: string;
 
   @IsOptional()
   @IsNumber()
   amount?: number;
+
+  @IsOptional()
+  @IsDateString()
+  @Type(() => Date)
+  date: Date;
 
   @IsOptional()
   @IsString()

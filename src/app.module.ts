@@ -23,7 +23,7 @@ import { WalletModule } from './wallet/wallet.module';
     TypeOrmModule.forRootAsync({
       imports: [ConfigModule],
       useFactory: async (configService: ConfigService) => {
-        // const isSsl = configService.get<boolean>('DATABASE_SSL'); // Get SSL flag from environment variables
+        const isSsl = configService.get<boolean>('DATABASE_SSL'); // Get SSL flag from environment variables
         return {
           type: 'postgres',
           host: configService.get('DATABASE_HOST'),
@@ -35,9 +35,9 @@ import { WalletModule } from './wallet/wallet.module';
           synchronize: true, // Set to false in production
           logging: true, // Enable logging
           logger: 'advanced-console',
-          // ssl: isSsl
-          //   ? { rejectUnauthorized: false } // Allow self-signed cert
-          //   : false, // Disable SSL if not required
+          ssl: isSsl
+            ? { rejectUnauthorized: false } // Allow self-signed cert
+            : false, // Disable SSL if not required
         };
       },
       inject: [ConfigService],

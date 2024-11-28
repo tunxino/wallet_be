@@ -1,4 +1,10 @@
-import { forwardRef, HttpException, HttpStatus, Inject, Injectable } from "@nestjs/common";
+import {
+  forwardRef,
+  HttpException,
+  HttpStatus,
+  Inject,
+  Injectable,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from './user.entity';
@@ -19,7 +25,7 @@ import { OAuth2Client } from 'google-auth-library';
 import { SocialLoginDto } from './users.dto';
 import { AuthService } from '../auth/auth.service';
 import { generatePassword } from '../Utils/string.utils';
-import axios from "axios";
+import axios from 'axios';
 
 @Injectable()
 export class UsersService {
@@ -76,23 +82,25 @@ export class UsersService {
     }
   }
 
-
-  async createWithFacebook(socialLoginDto: SocialLoginDto): Promise<ResponseBase> {
+  async createWithFacebook(
+    socialLoginDto: SocialLoginDto,
+  ): Promise<ResponseBase> {
     try {
       const user = await this.findOne(socialLoginDto.email);
       if (user != null) {
         return await this.authService.signInGoogle(user);
       } else {
-        const newUser = await this.createBySocial(socialLoginDto.email, socialLoginDto.name);
+        const newUser = await this.createBySocial(
+          socialLoginDto.email,
+          socialLoginDto.name,
+        );
         return await this.authService.signInGoogle(newUser);
       }
     } catch (error) {
-      console.log('error.............',error);
+      console.log('error.............', error);
       throw new HttpException('Invalid token', HttpStatus.BAD_REQUEST);
     }
   }
-
-
 
   async createBySocial(email: string, name: string): Promise<User> {
     const password = generatePassword();

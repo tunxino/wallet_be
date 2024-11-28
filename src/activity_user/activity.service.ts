@@ -78,16 +78,39 @@ export class ActivityService {
         `Activity with ID ${updateActivityDto.id} not found`,
       );
     }
-    if (updateActivityDto.type) {
-      activity.type = updateActivityDto.type;
-    }
+
+    const wallet = await this.walletRepository.findOneBy({
+      id: activity.walletId,
+    });
     if (updateActivityDto.category) {
       activity.category = updateActivityDto.category;
     }
     if (updateActivityDto.amount) {
+      if (activity.type === ActivityType.WITHDRAWAL) {
+        wallet.amount = wallet.amount - Number(activity.amount);
+      } else {
+        wallet.amount = wallet.amount + Number(activity.amount);
+      }
+      if (updateActivityDto.type === ActivityType.WITHDRAWAL) {
+        wallet.amount = wallet.amount + Number(updateActivityDto.amount);
+      } else {
+        wallet.amount = wallet.amount - Number(updateActivityDto.amount);
+      }
       activity.amount = updateActivityDto.amount;
     }
-
+    if (updateActivityDto.type) {
+      activity.type = updateActivityDto.type;
+    }
+    if (updateActivityDto.date) {
+      activity.date = updateActivityDto.date;
+    }
+    if(wallet.amount < 0){
+      return {
+        message: 'Total amount not enough money!',
+        code: HttpStatus.BAD_REQUEST,
+      }
+    }
+    await this.walletRepository.save(wallet);
     await this.activityRepository.save(activity);
     return {
       message: 'User edited successfully',
@@ -100,11 +123,22 @@ export class ActivityService {
   }
 
   async delete(id: string): Promise<ResponseBase> {
-    // Try to find the activity by ID
     const activity = await this.activityRepository.findOne({ where: { id } });
     if (!activity) {
       throw new NotFoundException(`Activity with ID ${id} not found`);
     }
+    const walletId = activity.walletId;
+    const wallet = await this.walletRepository.findOneBy({
+      id: walletId,
+    });
+    if (wallet) {
+      if (activity.type === ActivityType.WITHDRAWAL) {
+        wallet.amount -= activity.amount;
+      } else {
+        wallet.amount += activity.amount;
+      }
+    }
+    await this.walletRepository.save(wallet);
     await this.activityRepository.remove(activity);
     return {
       message: 'User delete successfully',
