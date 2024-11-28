@@ -108,7 +108,7 @@ export class ActivityService {
       return {
         message: 'Total amount not enough money!',
         code: HttpStatus.BAD_REQUEST,
-      }
+      };
     }
     await this.walletRepository.save(wallet);
     await this.activityRepository.save(activity);

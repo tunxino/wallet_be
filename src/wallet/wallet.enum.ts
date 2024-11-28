@@ -3,4 +3,5 @@ export enum WalletType {
   CASH = 'CASH',
   CARD = 'CARD',
   CRYPTO = 'CRYPTO',
+  LOAN = 'LOAN',
 }

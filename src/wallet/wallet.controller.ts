@@ -11,7 +11,7 @@ import { AuthGuard } from '../auth/auth.guard';
 import { WalletService } from './wallet.service';
 import { Wallet } from './wallet.entity';
 import { ResponseBase } from '../users/base.entity';
-import { WalletDto, WalletEditDto } from "./wallet.dto";
+import { WalletDto, WalletEditDto } from './wallet.dto';
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('wallet')
