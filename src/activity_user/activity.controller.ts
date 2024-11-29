@@ -26,7 +26,11 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Activity } from './activity.entity';
 
 const storage = diskStorage({
-  destination: './uploads/images',
+
+  destination: function (req, file, cb) {
+    const uploadPath = './uploads/images'; // default to local path
+    cb(null, uploadPath);
+  },
   filename: (req, file, callback) => {
     const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
     callback(
