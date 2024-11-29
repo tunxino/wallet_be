@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import admin, { storage } from "../config/firebase-config";
+import admin, { storage } from '../config/firebase-config';
 
 @Injectable()
 export class FirebaseService {
@@ -55,5 +55,4 @@ export class FirebaseService {
       stream.end(file.buffer);
     });
   }
-
 }
