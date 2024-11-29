@@ -24,9 +24,9 @@ import { diskStorage } from 'multer';
 import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Activity } from './activity.entity';
+import { FirebaseService } from "../firebase/firebase.service";
 
 const storage = diskStorage({
-
   destination: function (req, file, cb) {
     const uploadPath = './uploads/images'; // default to local path
     cb(null, uploadPath);
@@ -43,21 +43,23 @@ const storage = diskStorage({
 @UseInterceptors(LoggingInterceptor)
 @Controller('activity')
 export class ActivityController {
-  constructor(private readonly activityService: ActivityService) {}
+  constructor(private readonly activityService: ActivityService,
+              private readonly firebaseService: FirebaseService,
+              ) {}
 
   // POST route to create a new activity
   @UseGuards(AuthGuard)
   @Post()
-  @UseInterceptors(FileInterceptor('image', { storage }))
+  @UseInterceptors(FileInterceptor('image'))
   async create(
     @Body() createActivityDto: CreateActivityDto,
     @UploadedFile() image: Express.Multer.File,
     @Request() req,
   ): Promise<ResponseBase> {
     if (image) {
-      createActivityDto.imageUrl = `/uploads/images/${image.filename}`;
+      const imageUrl = await this.firebaseService.uploadFile(image);
+      createActivityDto.imageUrl = imageUrl;
     }
-
     return this.activityService.create(createActivityDto, req.user.id);
   }
 

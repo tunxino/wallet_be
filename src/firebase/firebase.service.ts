@@ -1,5 +1,5 @@
 import { Injectable } from '@nestjs/common';
-import admin from '../config/firebase-config';
+import admin, { storage } from "../config/firebase-config";
 
 @Injectable()
 export class FirebaseService {
@@ -25,4 +25,35 @@ export class FirebaseService {
       throw error;
     }
   }
+
+  async uploadFile(file: Express.Multer.File): Promise<string> {
+    const bucket = storage.bucket('cigarhclub.appspot.com');
+
+    const fileName = `${Date.now()}-${file.originalname}`;
+    const fileUpload = bucket.file(fileName);
+
+    const stream = fileUpload.createWriteStream({
+      metadata: {
+        contentType: file.mimetype,
+      },
+    });
+
+    return new Promise((resolve, reject) => {
+      stream.on('error', (error) => {
+        reject(error);
+      });
+
+      stream.on('finish', async () => {
+        // Make the file publicly accessible
+        await fileUpload.makePublic();
+
+        // Get the public URL
+        const publicUrl = `https://storage.googleapis.com/${bucket.name}/${fileUpload.name}`;
+        resolve(publicUrl);
+      });
+
+      stream.end(file.buffer);
+    });
+  }
+
 }

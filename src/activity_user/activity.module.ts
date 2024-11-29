@@ -4,10 +4,15 @@ import { ActivityService } from './activity.service';
 import { ActivityController } from './activity.controller';
 import { Activity } from './activity.entity';
 import { FirebaseService } from '../firebase/firebase.service';
-import { Wallet } from "../wallet/wallet.entity";
+import { Wallet } from '../wallet/wallet.entity';
+import { MulterModule } from "@nestjs/platform-express";
+import { diskStorage } from "multer";
+import { extname } from "path";
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Activity, Wallet])],
+  imports: [
+    TypeOrmModule.forFeature([Activity, Wallet]),
+  ],
   providers: [ActivityService, FirebaseService],
   controllers: [ActivityController],
   exports: [ActivityService],

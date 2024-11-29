@@ -3,23 +3,23 @@ import { ServiceAccount } from 'firebase-admin';
 
 const serviceAccount = {
   type: 'service_account',
-  project_id: 'authenticatorapp-44dfa',
-  private_key_id: '5aa87b1d40474208404e6eb0865db3b164fb5731',
+  project_id: 'cigarhclub',
+  private_key_id: '77d1d07bba67d2ee19bf19efabd73d6244ea9410',
   private_key:
-    '-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCurrcdvoj6Ky9o\n/TGVgXSxjDNcf86nFOGMvr2fBVDZcHMGGUisu2DSpOObLUn+KKDrI9m3WE3Zd/02\nyuoH9yEoOIZNJOss/5VpANdSAHOre4GYcbJt2os74WFq3VsNnecVPnXhD7f7fNiy\nZVCa+I7a0I0vi1qmF7w6flooRheS83D4C75IT67RXcFWQr9JI81QjDc+0XQJiYn8\n423hUpehuMDvCYQybJY0MhLXI+R6kq/BUIJ0ScCMB5C3kF9HRSRKtFfdGEXe120/\nmuikukQ0V6zJ22Bc2xYCxdck99BlRiuhNdrPBLFEj3Xh7O5lyQBy2aiyl12toWJP\nG0xT7in1AgMBAAECggEABbkQR/inCWiXSqa66z6vMpN9jki2Xfnlw2QT8vGZ9lCW\nfdjWkc1Mw81dXAcqkT40KEyQ2Q6R4hQp9wqNeINDqSZ/gDEEs0pQd7O+vr9WHRaY\n9DsCOAladOupRRIgQV78hBpEcMIlCmevcxEQ46korCBXhhZ8utUZKsdImPMc7Br8\nKyP9FU4euAbQiTSHxs+AufDTYHJwHV7TWoXqfkUCRJ52oC8w+3GiCJxNlTcL/B3y\nBM0O0SC7BRrE1PctZSYABl9db+1RaK1tjRMJf4HnWICmeQSIu6i1dxx0u9fl58YT\nwoEIPCzuaFMGPu8SxaNvK6xEdyG9nGeiy3mVYRpoAQKBgQD0YRCxxMSaB6kEh1l2\na3odsxGn3K8s7AHnPKXV3oyyQDjPyL4eEuHqBlYn1H8ipW66gbz/y2Jqw0bIlpMP\nF6PBHLOFIkFngiq0UVmqWrVTIXzls/5a4yrbeL3wgfIROeBwoz7/PJQyj4AIbbWI\nkxfm+QjnKna7nuljhjXRYsaB9QKBgQC2/TOqQSIlsmWS8X0W8/N8LrzNK/Lm6BrT\nAqdbh83KYIOazQEg4qx5BqFohOzpAXbOiqKgM9S692bIhthVnEqbAeSFKU0dCPkn\n38VJUAflumhWMD4Cw+/5+NFgOF0khBgNXtReDreSYSxDrnkwMf3inxYnG0nPlyCA\nlEMj4bgIAQKBgQDMXkxOziY4RgWz8tj/LnyOT82JGwYoRCqHTfHFvHrfKtQX+GH9\n1n61bp0obA3yVHUYZh0/sb/ZVvtgDoRnT7azbaQ3x2D5BiNebtXUoE0Ze1zu4Crr\nqSSTLBN0Ccf9XfBzYiHx46Bv9A/3fIAe+hw4HbWzVJC88PVvNLLXK4qk7QKBgDVN\nWAlV4657Yp8E/Nz8voYDzzcsgBrGrVmdwkYlLsquhmdHI/cCUB8I0WdyoNfWd1b+\nhxSHRIYZnrT2onl9hzXTvU8UksPMY1c8FWmfiE1gmRfSAZ4omPSFh+exQ2Bpod/z\nKYUkYFChQZWNcvuY9E1Y7ckCZ+OyL+OETHJdQ5ABAoGBAM6Hzhjz5uDl/QJvY4Wo\n23samY5JDOEPIAAkfgo8KBd5eQTnLwkg4HYjRfY3A1UontUOkZZaodEbgm27KSTh\nYaQMcjBcKvAmUNCElCNP6JKOotcSnh33FHzZAObhDMkiKiCTWgtnH3MBf1n3efmO\nxpB8Hhsyz07sAUtAwJbuwVPR\n-----END PRIVATE KEY-----\n',
-  client_email:
-    'firebase-adminsdk-q7ajd@authenticatorapp-44dfa.iam.gserviceaccount.com',
-  client_id: '106516651127831670555',
+    '-----BEGIN PRIVATE KEY-----\nMIIEvQIBADANBgkqhkiG9w0BAQEFAASCBKcwggSjAgEAAoIBAQDsUJ20OIA0Rt8S\nDqOlqdMtGc6yVD/GO/jF1QWUqnFkQ3Fm+zcSJvprukcboaa1HKtpWlkNaPU1gqbv\n6X0o1/ekRhXozATz2wk/F1engCM5elQtUxxPyZe8nuVg2Nh2NWk9c+MQBaiEFhTM\nwKwPqhF150k+wi4oU3FvcF0gKISAvvxpERZwWWAB5ki2vN+QZeu9yC5VgcprId50\nfTNqK9+asUFuXWTARlH5kfo7JxNBdI+9K7g9DtzmJvGgMjclu7CEdKBKGElnJV7l\n1TwwPABe5l4esDWLtX1UAd1L9086NMszbMwwalkoORs0ExoWBu221DjbudglGCZO\nDSZgfqnlAgMBAAECggEAJo5hqK+mRUFB8JOIYkVi0eM5zPE/hYOv63E965tijFIP\nrNZ0jgbjiVOXefvmM/sVQYdu66fyCBTE0XR2SgVwn3Ia7YRqE3JroApaMBdRR/W8\nSbfbcO4qjmkbcjF3IdRFkzP2+lx9+e0TYDPYbubX2fWORwnOF6DDq4O5Af/yXIHc\na2DN8sjRHiDbKbLNz3SzPgI+ijyHA94aUDV9VFVWXoaPGbfwU7xTyUtcUatOKPzu\ngWwtLCVFpwf/DZGmrjSrMfYten6ryPWKXKWZtdyOmg6cmK1fb/x0hL4oJgT0NzPH\nhCQRTob+Ed7WJ1JB67H7Gk+5SoGTlIgOvFoNrUSfmQKBgQD7lFkEakyLujTESVZB\nBV0PNjqrzEX5B16f/LvDjOf5VO3WOfJBIgnGp3QsG9xMhykl3ikpetEfv++bLGYe\n1Z48Mh6qvuXOMZJGy1lOoqbRqJ3iyW4DhGQADesMNyg8SFm/gh5CEYubPMkLsM+w\noZ5tYoZpe8wPlH2OK0KXBAn2rQKBgQDwd5r3vWGmcICUeQmF0sTZ2uMnP20w78N0\nhSfT4k0IyArhiOUeqHY3+kcW6NcbcxKSGi1L/ww9Hv6HUj6QqHl/6wsdFbyg9jrL\n3o89ef4C0ZI/aaIsiZMKe1MiQzYBMcR5wmYkHaFDjVyt7fj3VsJSjuehpyt4+Aom\nKi6nDjU/GQKBgGTiy4O6wPFzfX+NTTqL1RKpk4ObSiAgNXEA36b+lXPl++5hlGVM\nKhFwy2R407IYrYaS/Xy11LDfvk1C07zfuzG2g5fDL9KtDFS5bRncnfsLnCz6y9Q7\nPgLLkgt2/vqVpO/oVQv3jz10dcbrY44Ycbi5vt8EFwPUbzkY3f5DT1+NAoGBAOqb\nhrIWLuN397rjrArIbA4wpFZyZ1HLWuKf1w++RnI+2X7ZVNDogw5yPFF5sgSx7Hhm\n2bK/j21ChAn6j9gKxx+qbhleT76q/QpShWXxU4Xkec8sfHD/eFpNn/pZoKLhr1Mr\n+wNZdTC3Bqka+EA4gTaS/iKVOrC3Lw+1L/cEwaZhAoGAPxeVlfYP9At0aS24dUFD\n5jckeQLHpmnBeuC1J1SkDMEoKidelG/x4WCSLBi7e0MdrNitWwEo5wRHvAFQP21Y\nE9rdE4hYbE8NCBFE/ByqkTuueu1YBZBds74I/F57q1g4LWOBVvTom7XjdC4f7YN6\nH1OQPA6h5ZlNDwRTRCV9JCs=\n-----END PRIVATE KEY-----\n',
+  client_email: 'firebase-adminsdk-fq2bc@cigarhclub.iam.gserviceaccount.com',
+  client_id: '109821367648004227943',
   auth_uri: 'https://accounts.google.com/o/oauth2/auth',
   token_uri: 'https://oauth2.googleapis.com/token',
   auth_provider_x509_cert_url: 'https://www.googleapis.com/oauth2/v1/certs',
   client_x509_cert_url:
-    'https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-q7ajd%40authenticatorapp-44dfa.iam.gserviceaccount.com',
+    'https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-fq2bc%40cigarhclub.iam.gserviceaccount.com',
   universe_domain: 'googleapis.com',
 };
-
 admin.initializeApp({
   credential: admin.credential.cert(serviceAccount as ServiceAccount),
+  storageBucket: process.env.FIREBASE_STORAGE_BUCKET,
 });
 
+export const storage = admin.storage();
 export default admin;
