@@ -25,7 +25,6 @@ import { OAuth2Client } from 'google-auth-library';
 import { SocialLoginDto } from './users.dto';
 import { AuthService } from '../auth/auth.service';
 import { generatePassword } from '../Utils/string.utils';
-import axios from 'axios';
 
 @Injectable()
 export class UsersService {
@@ -142,7 +141,7 @@ export class UsersService {
       accountName: newUser.name,
       type: WalletType.BANK,
       isDefault: true,
-      currency: 'vnd',
+      currency: 'VND',
       icon: 'BANK',
       amount: 0,
     });
