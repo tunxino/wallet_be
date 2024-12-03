@@ -43,3 +43,9 @@ export class ReorderCategoriesDto {
   @IsString()
   icon: string;
 }
+
+export class DeleteCategoriesDto {
+  @IsNotEmpty()
+  @IsString()
+  id: string;
+}

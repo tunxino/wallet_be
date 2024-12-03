@@ -52,4 +52,13 @@ export class CategoryService {
       code: HttpStatus.ACCEPTED,
     }; // Return the updated list of categories
   }
+
+  async deleteById(id: string): Promise<ResponseBase> {
+    await this.categoryRepository.delete({ id: id });
+
+    return {
+      message: 'delete Categories',
+      code: HttpStatus.ACCEPTED,
+    };
+  }
 }

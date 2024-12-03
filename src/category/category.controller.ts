@@ -12,7 +12,11 @@ import { CategoryService } from './category.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { Category } from './category.entity';
 import { ResponseBase } from '../users/base.entity';
-import { CategoryDto, ReorderCategoriesDto } from './category.dto';
+import {
+  CategoryDto,
+  DeleteCategoriesDto,
+  ReorderCategoriesDto,
+} from './category.dto';
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('category')
@@ -40,5 +44,13 @@ export class CategoryController {
     @Body() reorderCategoriesDto: ReorderCategoriesDto[],
   ): Promise<ResponseBase> {
     return this.categoryService.reorderCategories(reorderCategoriesDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('delete')
+  async deleteCategory(
+    @Body() deleteCategoriesDto: DeleteCategoriesDto,
+  ): Promise<ResponseBase> {
+    return this.categoryService.deleteById(deleteCategoriesDto.id);
   }
 }

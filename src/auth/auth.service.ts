@@ -1,10 +1,11 @@
 import {
   forwardRef,
-  HttpStatus, Inject,
+  HttpStatus,
+  Inject,
   Injectable,
   NotFoundException,
-  UnauthorizedException
-} from "@nestjs/common";
+  UnauthorizedException,
+} from '@nestjs/common';
 import { UsersService } from '../users/users.service';
 import { JwtService } from '@nestjs/jwt';
 import { ResponseBase } from '../users/base.entity';
