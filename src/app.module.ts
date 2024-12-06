@@ -14,6 +14,7 @@ import { LoggingInterceptor } from './common/logging.interceptor';
 import { FundModule } from './fund/fund.module';
 import { CategoryModule } from './category/category.module';
 import { WalletModule } from './wallet/wallet.module';
+import { BudgetModule } from './budget/budget.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { WalletModule } from './wallet/wallet.module';
     CategoryModule,
     WalletModule,
     FundModule,
+    BudgetModule,
   ],
   controllers: [AppController, CatsController],
   providers: [

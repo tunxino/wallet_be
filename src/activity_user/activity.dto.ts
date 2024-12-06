@@ -94,3 +94,11 @@ export class GetActivitiesChartDateRangeDto {
   @IsEnum(ActivityType)
   type: ActivityType;
 }
+
+export class FilterDto {
+  @IsDateString()
+  startDate?: string;
+
+  @IsDateString()
+  endDate?: string;
+}

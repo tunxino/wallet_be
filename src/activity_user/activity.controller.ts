@@ -20,32 +20,16 @@ import {
 import { AuthGuard } from '../auth/auth.guard';
 import { ResponseBase } from '../users/base.entity';
 import { LoggingInterceptor } from '../common/logging.interceptor';
-import { diskStorage } from 'multer';
-import { extname } from 'path';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { Activity } from './activity.entity';
-import { FirebaseService } from "../firebase/firebase.service";
-
-const storage = diskStorage({
-  destination: function (req, file, cb) {
-    const uploadPath = './uploads/images'; // default to local path
-    cb(null, uploadPath);
-  },
-  filename: (req, file, callback) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1e9);
-    callback(
-      null,
-      file.fieldname + '-' + uniqueSuffix + extname(file.originalname),
-    );
-  },
-});
+import { FirebaseService } from '../firebase/firebase.service';
 
 @UseInterceptors(LoggingInterceptor)
 @Controller('activity')
 export class ActivityController {
-  constructor(private readonly activityService: ActivityService,
-              private readonly firebaseService: FirebaseService,
-              ) {}
+  constructor(
+    private readonly activityService: ActivityService,
+    private readonly firebaseService: FirebaseService,
+  ) {}
 
   // POST route to create a new activity
   @UseGuards(AuthGuard)
