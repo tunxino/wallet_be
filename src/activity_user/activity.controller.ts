@@ -71,10 +71,10 @@ export class ActivityController {
     return this.activityService.delete(deleteActivityDto.id);
   }
 
-  @Post('deleteAll')
-  async deleteAll() {
-    return this.activityService.deleteAll();
-  }
+  // @Post('deleteAll')
+  // async deleteAll() {
+  //   return this.activityService.deleteAll();
+  // }
 
   @UseGuards(AuthGuard)
   @Post('getActivityByWalletId')

@@ -74,10 +74,33 @@ export class BudgetsService {
     userId: number,
     filterDto: FilterDto,
   ): Promise<ResponseBase> {
-    const budgets = await this.budgetRepository.find({
+    const { startDate, endDate } = filterDto;
+    const type = 'DEPOSIT';
+
+    // Khởi tạo query từ đầu để chạy song song
+    const budgetPromise = this.budgetRepository.find({
       where: { userId },
       relations: ['details'],
     });
+
+    const activityPromise = this.activityRepository
+      .createQueryBuilder('activity')
+      .select('activity.category', 'category')
+      .addSelect('SUM(activity.amount)', 'totalAmount')
+      .addSelect('activity.icon', 'icon')
+      .where('activity.userId = :userId', { userId })
+      .andWhere('activity.type = :type', { type })
+      .andWhere('activity.date >= :startDate', { startDate })
+      .andWhere('activity.date <= :endDate', { endDate })
+      .groupBy('activity.category')
+      .addGroupBy('activity.icon')
+      .getRawMany();
+
+    // Thực hiện đồng thời cả 2 promise
+    const [budgets, totalByCategory] = await Promise.all([
+      budgetPromise,
+      activityPromise,
+    ]);
 
     if (!budgets || budgets.length === 0) {
       return {
@@ -86,38 +109,11 @@ export class BudgetsService {
       };
     }
 
-    const { startDate, endDate } = filterDto;
-    const type = 'DEPOSIT';
-
-    const query = this.activityRepository.createQueryBuilder('activity');
-
-    if (userId) {
-      query.andWhere('activity.userId = :userId', { userId });
-    }
-
-    if (startDate) {
-      query.andWhere('activity.date >= :startDate', { startDate });
-    }
-
-    if (endDate) {
-      query.andWhere('activity.date <= :endDate', { endDate });
-    }
-
-    if (type) {
-      query.andWhere(`activity.type = :type`, { type });
-    }
-    const totalByCategory = await query
-      .select('activity.category', 'category')
-      .addSelect('SUM(activity.amount)', 'totalAmount')
-      .addSelect('activity.icon', 'icon')
-      .groupBy('activity.category')
-      .addGroupBy('activity.icon')
-      .getRawMany();
-
     const listResponse = await this.mergeBudgets(
       totalByCategory,
       budgets[0].details,
     );
+
     return {
       message: `Budget list successfully`,
       code: HttpStatus.OK,
@@ -128,30 +124,29 @@ export class BudgetsService {
     };
   }
 
-  async mergeBudgets(totalByCategory: any[], listBudget: BudgetDetail[]) {
+  async mergeBudgets(
+    totalByCategory: { category: string; totalAmount: number; icon: string }[],
+    listBudget: BudgetDetail[],
+  ) {
     const budgetMap = new Map(
-      totalByCategory.map((item) => [item.category, item]),
+      totalByCategory.map((item) => [
+        item.category,
+        {
+          totalAmount: Number(item.totalAmount), // Ensure numeric
+          icon: item.icon,
+        },
+      ]),
     );
 
-    const mergedResult = listBudget.map((item) => {
-      const matchingBudget = budgetMap.get(item.name);
+    return listBudget.map((item) => {
+      const matched = budgetMap.get(item.name);
 
-      if (matchingBudget) {
-        return {
-          category: item.name,
-          icon: item.icon,
-          totalAmount: matchingBudget.totalAmount,
-          amount: item.amount, // The amount from listBudget
-        };
-      }
       return {
         category: item.name,
         icon: item.icon,
-        totalAmount: 0,
-        amount: item.amount, // Or any default value
+        totalAmount: matched?.totalAmount ?? 0,
+        amount: item.amount,
       };
     });
-
-    return mergedResult;
   }
 }

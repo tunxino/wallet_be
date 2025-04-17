@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository, Between, DataSource } from 'typeorm';
 import { Activity } from './activity.entity';
 import {
   CreateActivityDto,
@@ -23,7 +23,8 @@ export class ActivityService {
     private walletRepository: Repository<Wallet>,
     @InjectRepository(User)
     private userRepository: Repository<User>,
-    private readonly firebaseService: FirebaseService, // Inject ở đây
+    private readonly firebaseService: FirebaseService,
+    private readonly dataSource: DataSource,
   ) {}
 
   async create(
@@ -147,28 +148,42 @@ export class ActivityService {
     };
   }
 
-  async deleteAll() {
-    return this.activityRepository.delete({});
-  }
+  // async deleteAll() {
+  //   return this.activityRepository.delete({});
+  // }
 
   async delete(id: string): Promise<ResponseBase> {
-    const activity = await this.activityRepository.findOne({ where: { id } });
+    const activity = await this.activityRepository.findOne({
+      where: { id },
+      select: ['id', 'amount', 'type', 'walletId'],
+    });
+
     if (!activity) {
       throw new NotFoundException(`Activity with ID ${id} not found`);
     }
-    const walletId = activity.walletId;
-    const wallet = await this.walletRepository.findOneBy({
-      id: walletId,
+
+    const wallet = await this.walletRepository.findOne({
+      where: { id: activity.walletId },
+      select: ['id', 'amount'],
     });
-    if (wallet) {
-      if (activity.type === ActivityType.WITHDRAWAL) {
-        wallet.amount -= activity.amount;
-      } else {
-        wallet.amount += activity.amount;
-      }
+
+    if (!wallet) {
+      throw new NotFoundException(
+        `Wallet with ID ${activity.walletId} not found`,
+      );
     }
-    await this.walletRepository.save(wallet);
-    await this.activityRepository.remove(activity);
+
+    if (activity.type === ActivityType.WITHDRAWAL) {
+      wallet.amount -= activity.amount;
+    } else {
+      wallet.amount += activity.amount;
+    }
+
+    await this.dataSource.transaction(async (manager) => {
+      await manager.save(wallet);
+      await manager.remove(activity);
+    });
+
     return {
       message: 'User delete successfully',
       code: HttpStatus.CREATED,
@@ -180,9 +195,6 @@ export class ActivityService {
     userId: number,
   ): Promise<ResponseBase> {
     const { startDate, endDate } = filterDto;
-    // const totalDepositResult: number = 0;
-    // const totalWithdrawResult: number = 0;
-    // Build the query
 
     const [activities, totalsByType, dailyTotals, monthlyTotals] =
       await Promise.all([
@@ -266,54 +278,57 @@ export class ActivityService {
 
   async getActivitiesChartDateRange(
     filterDto: GetActivitiesChartDateRangeDto,
-    userId: string,
+    userId: number,
   ): Promise<ResponseBase> {
     const { startDate, endDate, type } = filterDto;
-
-    // Build the query
-    const query = this.activityRepository.createQueryBuilder('activity');
-
-    if (userId) {
-      query.andWhere('activity.userId = :userId', { userId });
-    }
+    const baseQuery = this.activityRepository
+      .createQueryBuilder('activity')
+      .where('activity.userId = :userId', { userId });
 
     if (startDate) {
-      query.andWhere('activity.date >= :startDate', { startDate });
+      baseQuery.andWhere('activity.date >= :startDate', { startDate });
     }
 
     if (endDate) {
-      query.andWhere('activity.date <= :endDate', { endDate });
+      baseQuery.andWhere('activity.date <= :endDate', { endDate });
     }
 
     if (type) {
-      query.andWhere(`activity.type = :type`, { type });
+      baseQuery.andWhere('activity.type = :type', { type });
     }
 
-    const activities = await query.getMany();
-    const totalByCategory = await query
-      .select('activity.category', 'category')
-      .addSelect('SUM(activity.amount)', 'totalAmount')
-      .addSelect('activity.icon', 'icon') // Select the icon
-      .groupBy('activity.category')
-      .addGroupBy('activity.icon')
-      .getRawMany();
+    const activities = await baseQuery.getMany();
+    let totalDepositResult = 0;
+    let totalWithdrawResult = 0;
+    const totalByCategoryMap: Record<
+      string,
+      { totalAmount: number; icon: string }
+    > = {};
 
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let totalDepositResult: number = 0;
-    // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    let totalWithdrawResult: number = 0;
+    for (const activity of activities) {
+      if (activity.type === ActivityType.DEPOSIT) {
+        totalDepositResult += activity.amount;
+      } else if (activity.type === ActivityType.WITHDRAWAL) {
+        totalWithdrawResult += activity.amount;
+      }
 
-    activities
-      .filter((item) => item.type === ActivityType.DEPOSIT)
-      .forEach((item) => {
-        totalDepositResult += item.amount;
-      });
+      if (!totalByCategoryMap[activity.category]) {
+        totalByCategoryMap[activity.category] = {
+          totalAmount: 0,
+          icon: activity.icon,
+        };
+      }
+      totalByCategoryMap[activity.category].totalAmount += activity.amount;
+    }
 
-    activities
-      .filter((item) => item.type === ActivityType.WITHDRAWAL)
-      .forEach((item) => {
-        totalWithdrawResult += item.amount;
-      });
+    // --- Format lại category totals ---
+    const totalByCategory = Object.entries(totalByCategoryMap).map(
+      ([category, data]) => ({
+        category,
+        totalAmount: data.totalAmount,
+        icon: data.icon,
+      }),
+    );
 
     return {
       message: 'successfully',

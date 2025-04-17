@@ -4,6 +4,7 @@ import {
   HttpStatus,
   Inject,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
@@ -173,13 +174,15 @@ export class UsersService {
   }
 
   async findOneByID(id: number): Promise<ResponseBase> {
-    const user = await this.usersRepository.findOne({ where: { id } });
-    const categories = await this.categoryRepository.find({
-      where: { userId: id },
-    });
-    const wallets = await this.walletRepository.find({
-      where: { userId: id },
-    });
+    const [user, categories, wallets] = await Promise.all([
+      this.usersRepository.findOne({ where: { id } }),
+      this.categoryRepository.find({ where: { userId: id } }),
+      this.walletRepository.find({ where: { userId: id } }),
+    ]);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
     wallets.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
 
     return {
@@ -190,8 +193,8 @@ export class UsersService {
         name: user.name,
         email: user.email,
         active: user.isActive,
-        wallets: wallets,
-        categories: categories,
+        wallets,
+        categories,
       },
     };
   }
