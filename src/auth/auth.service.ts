@@ -19,7 +19,11 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
-  async signIn(email: string, pass: string): Promise<ResponseBase> {
+  async signIn(
+    email: string,
+    pass: string,
+    tokenFCM: string,
+  ): Promise<ResponseBase> {
     const user = await this.usersService.findOne(email);
     const isValid = await this.usersService.validatePassword(email, pass);
 
@@ -34,11 +38,18 @@ export class AuthService {
     if (!isValid) {
       throw new UnauthorizedException();
     }
+
+    if (tokenFCM) {
+      user.tokenFCM = tokenFCM;
+      await this.usersService.updateTokenFCM(user, tokenFCM);
+    }
+
     const payload = {
       id: user.id,
       name: user.name,
       username: user.email,
       isActive: user.isActive,
+      tokenFCM: user.tokenFCM,
     };
 
     return {
@@ -56,6 +67,7 @@ export class AuthService {
       name: user.name,
       username: user.email,
       isActive: user.isActive,
+      tokenFCM: user.tokenFCM,
     };
 
     return {

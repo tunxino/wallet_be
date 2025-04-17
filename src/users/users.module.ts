@@ -5,8 +5,8 @@ import { User } from './user.entity';
 import { UsersController } from './users.controller';
 import { Category } from '../category/category.entity';
 import { CategoryModule } from '../category/category.module';
-import { Wallet } from "../wallet/wallet.entity";
-import { AuthModule } from "../auth/auth.module";
+import { Wallet } from '../wallet/wallet.entity';
+import { AuthModule } from '../auth/auth.module';
 
 @Module({
   imports: [

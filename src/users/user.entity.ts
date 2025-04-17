@@ -26,6 +26,9 @@ export class User {
   otp: string;
 
   @Column({ nullable: true })
+  tokenFCM: string;
+
+  @Column({ nullable: true })
   otpExpires: Date;
 
   @CreateDateColumn()

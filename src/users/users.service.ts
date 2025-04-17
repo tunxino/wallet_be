@@ -72,7 +72,11 @@ export class UsersService {
       if (user != null) {
         return await this.authService.signInGoogle(user);
       } else {
-        const newUser = await this.createBySocial(payload.email, payload.name);
+        const newUser = await this.createBySocial(
+          payload.email,
+          payload.name,
+          socialLoginDto.tokenFCM,
+        );
         return await this.authService.signInGoogle(newUser);
       }
     } catch (error) {
@@ -92,6 +96,7 @@ export class UsersService {
         const newUser = await this.createBySocial(
           socialLoginDto.email,
           socialLoginDto.name,
+          socialLoginDto.tokenFCM,
         );
         return await this.authService.signInGoogle(newUser);
       }
@@ -101,7 +106,11 @@ export class UsersService {
     }
   }
 
-  async createBySocial(email: string, name: string): Promise<User> {
+  async createBySocial(
+    email: string,
+    name: string,
+    tokenFCM: string,
+  ): Promise<User> {
     const password = generatePassword();
     const hashedPassword = await bcrypt.hash(password, 10);
     const newUser = this.usersRepository.create({
@@ -109,6 +118,7 @@ export class UsersService {
       email: email,
       password: hashedPassword,
       isActive: true,
+      tokenFCM: tokenFCM,
     });
     await this.usersRepository.save(newUser);
 
@@ -205,6 +215,7 @@ export class UsersService {
       password: hashedPassword,
       otp: otp,
       otpExpires: otpExpires,
+      tokenFCM: user.tokenFCM,
     });
     await this.usersRepository.save(newUser);
     await this.sendOtpEmail(user.email, otp);
@@ -285,6 +296,11 @@ export class UsersService {
     }
 
     return false;
+  }
+
+  async updateTokenFCM(user: User, tokenFCM: string) {
+    user.tokenFCM = tokenFCM;
+    await this.usersRepository.save(user);
   }
 
   async validatePassword(email: string, password: string): Promise<boolean> {

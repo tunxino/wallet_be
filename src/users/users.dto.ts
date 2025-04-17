@@ -12,4 +12,8 @@ export class SocialLoginDto {
   @IsNotEmpty()
   @IsString()
   name: string;
+
+  @IsNotEmpty()
+  @IsString()
+  tokenFCM: string;
 }

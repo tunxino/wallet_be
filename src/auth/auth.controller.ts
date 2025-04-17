@@ -17,8 +17,12 @@ export class AuthController {
 
   @HttpCode(HttpStatus.OK)
   @Post('login')
-  signIn(@Body() signInDto: Record<string, any>) : Promise<ResponseBase>  {
-    return this.authService.signIn(signInDto.username, signInDto.password);
+  signIn(@Body() signInDto: Record<string, any>): Promise<ResponseBase> {
+    return this.authService.signIn(
+      signInDto.username,
+      signInDto.password,
+      signInDto.tokenFCM,
+    );
   }
 
   @UseGuards(AuthGuard)
