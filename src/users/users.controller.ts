@@ -4,18 +4,15 @@ import {
   Post,
   Body,
   Request,
-  UseInterceptors,
   HttpStatus,
   UseGuards,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
 import { ResponseBase, VerifyOtpDto } from './base.entity';
-import { LoggingInterceptor } from '../common/logging.interceptor';
 import { AuthGuard } from '../auth/auth.guard';
-import { SocialLoginDto } from "./users.dto";
+import { SocialLoginDto } from './users.dto';
 
-@UseInterceptors(new LoggingInterceptor())
 @Controller('users')
 export class UsersController {
   constructor(private readonly usersService: UsersService) {}

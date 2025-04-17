@@ -1,19 +1,11 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Request,
-  UseGuards,
-  UseInterceptors,
-} from '@nestjs/common';
-import { LoggingInterceptor } from '../common/logging.interceptor';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
+// import { LoggingInterceptor } from '../common/logging.interceptor';
 import { AuthGuard } from '../auth/auth.guard';
 import { WalletService } from './wallet.service';
 import { Wallet } from './wallet.entity';
 import { ResponseBase } from '../users/base.entity';
 import { WalletDto, WalletEditDto } from './wallet.dto';
 
-@UseInterceptors(LoggingInterceptor)
 @Controller('wallet')
 export class WalletController {
   constructor(private walletService: WalletService) {}

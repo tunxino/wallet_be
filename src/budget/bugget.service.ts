@@ -2,7 +2,7 @@ import { HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Budget, BudgetDetail } from './budget.entity';
-import { CreateBudgetDto } from './budget.dto';
+import { CreateBudgetDto, EditBudgetDto } from './budget.dto';
 import { ResponseBase } from '../users/base.entity';
 import { Activity } from '../activity_user/activity.entity';
 import { FilterDto } from '../activity_user/activity.dto';
@@ -45,6 +45,31 @@ export class BudgetsService {
     };
   }
 
+  async editBudgetById(editBudgetDto: EditBudgetDto): Promise<ResponseBase> {
+    const { id, amount, details } = editBudgetDto;
+
+    const budget = await this.budgetRepository.findOneBy({ id: id });
+
+    budget.amount = amount;
+
+    budget.details = details.map((detail) => {
+      const budgetDetail = new BudgetDetail();
+      budgetDetail.icon = detail.icon;
+      budgetDetail.amount = detail.amount;
+      budgetDetail.name = detail.name;
+      budgetDetail.budget = budget;
+      return budgetDetail;
+    });
+
+    await this.budgetRepository.save(budget);
+    await this.budgetDetailRepository.save(budget.details);
+
+    return {
+      message: `Budget created successfully.`,
+      code: HttpStatus.OK,
+    };
+  }
+
   async getBudgets(
     userId: number,
     filterDto: FilterDto,
@@ -54,7 +79,7 @@ export class BudgetsService {
       relations: ['details'],
     });
 
-    if (!budgets) {
+    if (!budgets || budgets.length === 0) {
       return {
         message: `Budget not found.`,
         code: HttpStatus.NOT_FOUND,

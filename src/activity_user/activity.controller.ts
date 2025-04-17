@@ -6,7 +6,6 @@ import {
   UseGuards,
   Request,
   UseInterceptors,
-  UploadedFile,
 } from '@nestjs/common';
 import { ActivityService } from './activity.service';
 import {
@@ -19,30 +18,39 @@ import {
 } from './activity.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { ResponseBase } from '../users/base.entity';
-import { LoggingInterceptor } from '../common/logging.interceptor';
-import { FileInterceptor } from '@nestjs/platform-express';
-import { FirebaseService } from '../firebase/firebase.service';
+import { SupabaseService } from '../supabase/supabase.service';
+import {
+  FileFieldsInterceptor,
+  UploadedFiles,
+} from '@blazity/nest-file-fastify';
 
-@UseInterceptors(LoggingInterceptor)
 @Controller('activity')
 export class ActivityController {
   constructor(
     private readonly activityService: ActivityService,
-    private readonly firebaseService: FirebaseService,
+    private readonly supabaseService: SupabaseService,
   ) {}
 
-  // POST route to create a new activity
-  @UseGuards(AuthGuard)
   @Post()
-  @UseInterceptors(FileInterceptor('image'))
+  @UseGuards(AuthGuard)
+  @UseInterceptors(FileFieldsInterceptor([{ name: 'image' }]))
   async create(
     @Body() createActivityDto: CreateActivityDto,
-    @UploadedFile() image: Express.Multer.File,
+    @UploadedFiles() files: Record<string, UploadedFile[]>,
     @Request() req,
   ): Promise<ResponseBase> {
-    if (image) {
-      const imageUrl = await this.firebaseService.uploadFile(image);
+    const file = files?.image?.[0];
+
+    if (file) {
+      const imageUrl = await this.supabaseService.uploadFile({
+        buffer: file.buffer,
+        originalname: `${Date.now()}_image.png`,
+        mimetype: file.mimetype,
+      } as Express.Multer.File);
+
       createActivityDto.imageUrl = imageUrl;
+    } else {
+      createActivityDto.imageUrl = '';
     }
     return this.activityService.create(createActivityDto, req.user.id);
   }
@@ -109,4 +117,11 @@ export class ActivityController {
   async getAll(@Request() req) {
     return this.activityService.getAll(req.user.id);
   }
+}
+
+interface UploadedFile {
+  buffer: Buffer;
+  mimetype: string;
+  fieldname: string;
+  size: number;
 }

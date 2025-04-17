@@ -4,9 +4,8 @@ import {
   Post,
   Request,
   UseGuards,
-  UseInterceptors,
 } from '@nestjs/common';
-import { LoggingInterceptor } from '../common/logging.interceptor';
+// import { LoggingInterceptor } from '../common/logging.interceptor';
 
 import { CategoryService } from './category.service';
 import { AuthGuard } from '../auth/auth.guard';
@@ -18,7 +17,6 @@ import {
   ReorderCategoriesDto,
 } from './category.dto';
 
-@UseInterceptors(LoggingInterceptor)
 @Controller('category')
 export class CategoryController {
   constructor(private categoryService: CategoryService) {}

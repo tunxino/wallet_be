@@ -5,16 +5,12 @@ import {
   HttpCode,
   HttpStatus,
   UseGuards,
-  Get,
   Request,
-  UseInterceptors,
 } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
-import { LoggingInterceptor } from '../common/logging.interceptor';
 import { ResponseBase } from '../users/base.entity';
 
-@UseInterceptors(LoggingInterceptor)
 @Controller('auth')
 export class AuthController {
   constructor(private authService: AuthService) {}

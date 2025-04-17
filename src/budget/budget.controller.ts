@@ -3,7 +3,7 @@
 import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { BudgetsService } from './bugget.service';
 
-import { CreateBudgetDto } from './budget.dto';
+import { CreateBudgetDto, EditBudgetDto } from './budget.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { ResponseBase } from '../users/base.entity';
 import { FilterDto } from '../activity_user/activity.dto';
@@ -20,6 +20,15 @@ export class BudgetsController {
     @Request() req,
   ): Promise<ResponseBase> {
     return this.budgetsService.createBudget(req.user.id, createBudgetDto);
+  }
+
+  @UseGuards(AuthGuard)
+  @Post('edit')
+  async editBudget(
+    @Body()
+    editBudgetDto: EditBudgetDto,
+  ): Promise<ResponseBase> {
+    return this.budgetsService.editBudgetById(editBudgetDto);
   }
 
   @UseGuards(AuthGuard)

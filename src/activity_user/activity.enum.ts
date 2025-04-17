@@ -39,3 +39,5 @@ export enum ActivityCategoryWithdraw {
   PRIZE = 'PRIZE',
   OTHER = 'OTHER',
 }
+
+

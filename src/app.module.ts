@@ -9,8 +9,6 @@ import { UsersModule } from './users/users.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ActivityModule } from './activity_user/activity.module';
-import { APP_INTERCEPTOR } from '@nestjs/core';
-import { LoggingInterceptor } from './common/logging.interceptor';
 import { FundModule } from './fund/fund.module';
 import { CategoryModule } from './category/category.module';
 import { WalletModule } from './wallet/wallet.module';
@@ -52,14 +50,7 @@ import { BudgetModule } from './budget/budget.module';
     BudgetModule,
   ],
   controllers: [AppController, CatsController],
-  providers: [
-    AppService,
-    CatsService,
-    {
-      provide: APP_INTERCEPTOR,
-      useClass: LoggingInterceptor,
-    },
-  ],
+  providers: [AppService, CatsService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
