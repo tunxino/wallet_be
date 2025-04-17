@@ -174,15 +174,13 @@ export class UsersService {
   }
 
   async findOneByID(id: number): Promise<ResponseBase> {
-    const [user, categories, wallets] = await Promise.all([
-      this.usersRepository.findOne({ where: { id } }),
-      this.categoryRepository.find({ where: { userId: id } }),
-      this.walletRepository.find({ where: { userId: id } }),
-    ]);
-
-    if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
-    }
+    const user = await this.usersRepository.findOne({ where: { id } });
+    const categories = await this.categoryRepository.find({
+      where: { userId: id },
+    });
+    const wallets = await this.walletRepository.find({
+      where: { userId: id },
+    });
     wallets.sort((a, b) => (b.isDefault ? 1 : 0) - (a.isDefault ? 1 : 0));
 
     return {
@@ -193,8 +191,8 @@ export class UsersService {
         name: user.name,
         email: user.email,
         active: user.isActive,
-        wallets,
-        categories,
+        wallets: wallets,
+        categories: categories,
       },
     };
   }

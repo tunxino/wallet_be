@@ -37,9 +37,6 @@ import { BudgetModule } from './budget/budget.module';
           ssl: isSsl
             ? { rejectUnauthorized: false } // Allow self-signed cert
             : false, // Disable SSL if not required
-          extra: {
-            max: 10, // 👈 tối đa 10 connection
-          },
         };
       },
       inject: [ConfigService],

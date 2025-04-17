@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between, DataSource } from 'typeorm';
+import { Repository, Between } from 'typeorm';
 import { Activity } from './activity.entity';
 import {
   CreateActivityDto,
@@ -13,6 +13,7 @@ import { ActivityType } from './activity.enum';
 import { Wallet } from '../wallet/wallet.entity';
 import { User } from '../users/user.entity';
 import { FirebaseService } from '../firebase/firebase.service';
+import { format } from 'date-fns';
 
 @Injectable()
 export class ActivityService {
@@ -24,7 +25,6 @@ export class ActivityService {
     @InjectRepository(User)
     private userRepository: Repository<User>,
     private readonly firebaseService: FirebaseService,
-    private readonly dataSource: DataSource,
   ) {}
 
   async create(
@@ -66,10 +66,8 @@ export class ActivityService {
       imageUrl,
     });
 
-    await Promise.all([
-      this.walletRepository.save(wallet),
-      this.activityRepository.save(newActivity),
-    ]);
+    await this.walletRepository.save(wallet);
+    await this.activityRepository.save(newActivity);
 
     const user = await this.userRepository.findOne({
       where: { id: userId },
@@ -148,10 +146,6 @@ export class ActivityService {
     };
   }
 
-  // async deleteAll() {
-  //   return this.activityRepository.delete({});
-  // }
-
   async delete(id: string): Promise<ResponseBase> {
     const activity = await this.activityRepository.findOne({
       where: { id },
@@ -178,12 +172,8 @@ export class ActivityService {
     } else {
       wallet.amount += activity.amount;
     }
-
-    await Promise.all([
-      await this.walletRepository.save(wallet),
-      await this.activityRepository.remove(activity),
-    ]);
-
+    await this.walletRepository.save(wallet);
+    await this.activityRepository.remove(activity);
     return {
       message: 'User delete successfully',
       code: HttpStatus.CREATED,
@@ -192,76 +182,82 @@ export class ActivityService {
 
   async getActivitiesByDateRange(
     filterDto: GetActivitiesByDateRangeDto,
-    userId: number,
+    userId: string,
   ): Promise<ResponseBase> {
     const { startDate, endDate } = filterDto;
+    let totalDepositResult: number = 0;
+    let totalWithdrawResult: number = 0;
+    // Build the query
+    const query = this.activityRepository.createQueryBuilder('activity');
 
-    const [activities, totalsByType, dailyTotals, monthlyTotals] =
-      await Promise.all([
-        this.activityRepository.find({
-          where: {
-            userId,
-            date: Between(new Date(startDate), new Date(endDate)),
-          },
-          order: { date: 'DESC' },
-        }),
-        this.activityRepository
-          .createQueryBuilder('activity')
-          .select('activity.type', 'type')
-          .addSelect('SUM(activity.amount)', 'total')
-          .where('activity.userId = :userId', { userId })
-          .andWhere('activity.date BETWEEN :startDate AND :endDate', {
-            startDate,
-            endDate,
-          })
-          .groupBy('activity.type')
-          .getRawMany(),
-        this.activityRepository
-          .createQueryBuilder('activity')
-          .select("TO_CHAR(activity.date, 'YYYY-MM-DD')", 'day')
-          .addSelect(
-            `SUM(CASE WHEN activity.type = 'DEPOSIT' THEN activity.amount ELSE 0 END)`,
-            'totaldepositamount',
-          )
-          .addSelect(
-            `SUM(CASE WHEN activity.type = 'WITHDRAWAL' THEN activity.amount ELSE 0 END)`,
-            'totalwithdrawalamount',
-          )
-          .where('activity.userId = :userId', { userId })
-          .andWhere('activity.date BETWEEN :startDate AND :endDate', {
-            startDate,
-            endDate,
-          })
-          .groupBy('day')
-          .orderBy('day', 'DESC')
-          .getRawMany(),
-        this.activityRepository
-          .createQueryBuilder('activity')
-          .select("TO_CHAR(activity.date, 'YYYY-MM')", 'day') // <--- đổi alias ở đây
-          .addSelect(
-            `SUM(CASE WHEN activity.type = 'DEPOSIT' THEN activity.amount ELSE 0 END)`,
-            'totaldepositamount',
-          )
-          .addSelect(
-            `SUM(CASE WHEN activity.type = 'WITHDRAWAL' THEN activity.amount ELSE 0 END)`,
-            'totalwithdrawalamount',
-          )
-          .where('activity.userId = :userId', { userId })
-          .andWhere('activity.date BETWEEN :startDate AND :endDate', {
-            startDate,
-            endDate,
-          })
-          .groupBy('day')
-          .orderBy('day', 'DESC')
-          .getRawMany(),
-      ]);
+    if (userId) {
+      query.andWhere('activity.userId = :userId', { userId });
+    }
+    if (startDate) {
+      query.andWhere('activity.date >= :startDate', { startDate });
+    }
+    if (endDate) {
+      query.andWhere('activity.date <= :endDate', { endDate });
+    }
+    query.orderBy('activity.date', 'DESC');
+    const activitiesRaw = await query.getMany();
+    const activities = activitiesRaw.map((activity) => {
+      const formattedDate = format(activity.date, 'yyyy-MM-dd');
+      return {
+        ...activity,
+        date: formattedDate,
+      };
+    });
+    activities
+      .filter((item) => item.type === ActivityType.DEPOSIT)
+      .forEach((item) => {
+        totalDepositResult += item.amount;
+      });
 
-    const totalDepositResult = Number(
-      totalsByType.find((t) => t.type === 'DEPOSIT')?.total || 0,
-    );
-    const totalWithdrawResult = Number(
-      totalsByType.find((t) => t.type === 'WITHDRAWAL')?.total || 0,
-    );
+    activities
+      .filter((item) => item.type === ActivityType.WITHDRAWAL)
+      .forEach((item) => {
+        totalWithdrawResult += item.amount;
+      });
+
+    const dailyTotalsArray = activities.reduce((acc, activity) => {
+      const day = activity.date;
+      if (!acc[day]) {
+        acc[day] = {
+          day: day,
+          totaldepositamount: 0,
+          totalwithdrawalamount: 0,
+        };
+      }
+      if (activity.type === 'DEPOSIT') {
+        acc[day].totaldepositamount += activity.amount;
+      } else if (activity.type === 'WITHDRAWAL') {
+        acc[day].totalwithdrawalamount += activity.amount;
+      }
+
+      return acc.valueOf();
+    }, {});
+    const dailyTotals = Object.values(dailyTotalsArray);
+
+    const monthlyTotalsArray = activities.reduce((acc, activity) => {
+      const month = format(new Date(activity.date), 'yyyy-MM'); // Format to get the month as "yyyy-MM"
+      if (!acc[month]) {
+        acc[month] = {
+          day: month,
+          totaldepositamount: 0,
+          totalwithdrawalamount: 0,
+        };
+      }
+      if (activity.type === 'DEPOSIT') {
+        acc[month].totaldepositamount += activity.amount;
+      } else if (activity.type === 'WITHDRAWAL') {
+        acc[month].totalwithdrawalamount += activity.amount;
+      }
+
+      return acc;
+    }, {});
+
+    const monthlyTotals = Object.values(monthlyTotalsArray);
 
     return {
       message: 'successfully',
