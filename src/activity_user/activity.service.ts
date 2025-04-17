@@ -179,10 +179,10 @@ export class ActivityService {
       wallet.amount += activity.amount;
     }
 
-    await this.dataSource.transaction(async (manager) => {
-      await manager.save(wallet);
-      await manager.remove(activity);
-    });
+    await Promise.all([
+      await this.walletRepository.save(wallet),
+      await this.activityRepository.remove(activity),
+    ]);
 
     return {
       message: 'User delete successfully',
