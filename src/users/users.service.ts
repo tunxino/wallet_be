@@ -4,10 +4,9 @@ import {
   HttpStatus,
   Inject,
   Injectable,
-  NotFoundException,
 } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { Repository, In } from 'typeorm';
 import { User } from './user.entity';
 import { ResponseBase } from './base.entity';
 import * as bcrypt from 'bcrypt';
@@ -171,6 +170,14 @@ export class UsersService {
 
   findOne(email: string): Promise<User> {
     return this.usersRepository.findOne({ where: { email } });
+  }
+
+  async getManyByIds(userIds: number[]): Promise<User[]> {
+    return this.usersRepository.find({
+      where: {
+        id: In(userIds),
+      },
+    });
   }
 
   async findOneByID(id: number): Promise<ResponseBase> {

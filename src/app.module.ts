@@ -13,6 +13,7 @@ import { FundModule } from './fund/fund.module';
 import { CategoryModule } from './category/category.module';
 import { WalletModule } from './wallet/wallet.module';
 import { BudgetModule } from './budget/budget.module';
+import { TaskModule } from './task_chedule/task.module';
 
 @Module({
   imports: [
@@ -48,6 +49,7 @@ import { BudgetModule } from './budget/budget.module';
     WalletModule,
     FundModule,
     BudgetModule,
+    TaskModule,
   ],
   controllers: [AppController, CatsController],
   providers: [AppService, CatsService],
