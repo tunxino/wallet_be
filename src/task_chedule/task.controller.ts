@@ -1,8 +1,16 @@
-import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
-import { CreateScheduledTaskDto, DeleteScheduledTaskDto } from "./tast.dto";
+import {
+  Body,
+  Controller,
+  Get,
+  Post,
+  Request,
+  UseGuards,
+} from '@nestjs/common';
+import { CreateScheduledTaskDto, DeleteScheduledTaskDto } from './tast.dto';
 import { TaskService } from './task.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { ResponseBase } from '../users/base.entity';
+import { CronApiKeyGuard } from './cron-api-key.guard';
 
 @Controller('task')
 export class TaskController {
@@ -32,5 +40,12 @@ export class TaskController {
     @Body() deleteScheduledTaskDto: DeleteScheduledTaskDto,
   ): Promise<ResponseBase> {
     return this.taskService.deleteTasks(deleteScheduledTaskDto.id);
+  }
+
+  @UseGuards(CronApiKeyGuard)
+  @Get('cron')
+  async runScheduledJobManually() {
+    await this.taskService.handleScheduledNotifications();
+    return { success: true };
   }
 }

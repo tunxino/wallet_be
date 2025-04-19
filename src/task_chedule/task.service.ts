@@ -1,4 +1,3 @@
-// notification/notification.service.ts
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
@@ -55,7 +54,7 @@ export class TaskService {
     return await this.taskRepository.save(notification);
   }
 
-  @Cron(CronExpression.EVERY_MINUTE)
+  // @Cron(CronExpression.EVERY_MINUTE)
   async handleScheduledNotifications() {
     const now = new Date();
 
@@ -85,9 +84,7 @@ export class TaskService {
         if (!user?.tokenFCM) return;
 
         try {
-          // Lock: Đánh dấu đang xử lý
           await this.taskRepository.update(item.id, { processing: true });
-
           await this.firebaseService.sendNotification(
             user.tokenFCM,
             item.title,
