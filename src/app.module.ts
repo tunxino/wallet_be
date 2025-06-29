@@ -14,6 +14,7 @@ import { CategoryModule } from './category/category.module';
 import { WalletModule } from './wallet/wallet.module';
 import { BudgetModule } from './budget/budget.module';
 import { TaskModule } from './task_chedule/task.module';
+import { GroupModule } from './group/group.module';
 
 @Module({
   imports: [
@@ -32,8 +33,8 @@ import { TaskModule } from './task_chedule/task.module';
           password: configService.get('DATABASE_PASSWORD'),
           database: configService.get('DATABASE_NAME'),
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: false, // Set to false in production
-          logging: true, // Enable logging
+          synchronize: true, // Set to false in production
+          logging: false, // Enable logging
           logger: 'advanced-console',
           ssl: isSsl
             ? { rejectUnauthorized: false } // Allow self-signed cert
@@ -50,6 +51,7 @@ import { TaskModule } from './task_chedule/task.module';
     FundModule,
     BudgetModule,
     TaskModule,
+    GroupModule,
   ],
   controllers: [AppController, CatsController],
   providers: [AppService, CatsService],

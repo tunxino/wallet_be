@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Budget, BudgetDetail } from './budget.entity';
@@ -6,6 +6,7 @@ import { CreateBudgetDto, EditBudgetDto } from './budget.dto';
 import { ResponseBase } from '../users/base.entity';
 import { Activity } from '../activity_user/activity.entity';
 import { FilterDto } from '../activity_user/activity.dto';
+import { v4 as uuidv4 } from 'uuid';
 
 @Injectable()
 export class BudgetsService {
@@ -31,6 +32,7 @@ export class BudgetsService {
     budget.details = details.map((detail) => {
       const budgetDetail = new BudgetDetail();
       budgetDetail.icon = detail.icon;
+      budgetDetail.id = uuidv4();
       budgetDetail.amount = detail.amount;
       budgetDetail.name = detail.name;
       budgetDetail.budget = budget;
@@ -45,27 +47,60 @@ export class BudgetsService {
     };
   }
 
-  async editBudgetById(editBudgetDto: EditBudgetDto): Promise<ResponseBase> {
-    const { id, amount, details } = editBudgetDto;
+  async updateBudget(
+    userId: number,
+    updateBudgetDto: EditBudgetDto,
+  ): Promise<ResponseBase> {
+    const { id, amount, details } = updateBudgetDto;
+    const budget = await this.budgetRepository.findOne({
+      where: { id: id, userId },
+      relations: ['details'],
+    });
 
-    const budget = await this.budgetRepository.findOneBy({ id: id });
+    if (!budget) {
+      return {
+        message: 'Budget not found.',
+        code: HttpStatus.NOT_FOUND,
+      };
+    }
 
     budget.amount = amount;
 
-    budget.details = details.map((detail) => {
-      const budgetDetail = new BudgetDetail();
-      budgetDetail.icon = detail.icon;
-      budgetDetail.amount = detail.amount;
-      budgetDetail.name = detail.name;
-      budgetDetail.budget = budget;
-      return budgetDetail;
-    });
+    const existingDetailsMap = new Map(budget.details.map((d) => [d.id, d]));
 
-    await this.budgetRepository.save(budget);
-    await this.budgetDetailRepository.save(budget.details);
+    const updatedDetails: BudgetDetail[] = [];
+
+    for (const detail of details) {
+      if (detail.id && existingDetailsMap.has(detail.id)) {
+        // Cập nhật detail cũ
+        const existing = existingDetailsMap.get(detail.id);
+        existing.icon = detail.icon;
+        existing.name = detail.name;
+        existing.amount = detail.amount;
+        updatedDetails.push(existing);
+        existingDetailsMap.delete(detail.id); // đánh dấu là đã xử lý
+      } else {
+        // Tạo mới detail
+        const newDetail = new BudgetDetail();
+        newDetail.id = uuidv4();
+        newDetail.icon = detail.icon;
+        newDetail.name = detail.name;
+        newDetail.amount = detail.amount;
+        newDetail.budget = budget;
+        updatedDetails.push(newDetail);
+      }
+    }
+    const toDelete = [...existingDetailsMap.values()];
+    if (toDelete.length > 0) {
+      await this.budgetDetailRepository.remove(toDelete);
+    }
+
+    budget.details = updatedDetails;
+
+    await this.budgetRepository.save(budget); // Cascade sẽ lưu detail
 
     return {
-      message: `Budget created successfully.`,
+      message: 'Budget updated successfully.',
       code: HttpStatus.OK,
     };
   }
@@ -118,6 +153,7 @@ export class BudgetsService {
       message: `Budget list successfully`,
       code: HttpStatus.OK,
       data: {
+        id: budgets[0].id,
         amountBudgets: budgets[0].amount,
         listResponse,
       },
@@ -146,6 +182,7 @@ export class BudgetsService {
         icon: item.icon,
         totalAmount: matched?.totalAmount ?? 0,
         amount: item.amount,
+        id: item.id,
       };
     });
   }

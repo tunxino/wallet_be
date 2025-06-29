@@ -1,4 +1,4 @@
-import { IsString, IsNumber, IsArray, ValidateNested } from 'class-validator';
+import { IsString, IsNumber, IsArray, ValidateNested, IsEmpty } from "class-validator";
 import { Type } from 'class-transformer';
 
 export class CreateBudgetDetailDto {
@@ -9,7 +9,10 @@ export class CreateBudgetDetailDto {
   amount: number; // Amount for the budget detail
 
   @IsString()
-  name: string; // Name of the budget detail
+  name: string;
+
+  @IsString()
+  id: string; // Name of the budget detail
 }
 
 export class CreateBudgetDto {

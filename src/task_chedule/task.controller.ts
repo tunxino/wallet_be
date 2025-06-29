@@ -48,4 +48,10 @@ export class TaskController {
     await this.taskService.handleScheduledNotifications();
     return { success: true };
   }
+
+  @Get()
+  async executeCronJob() {
+    await this.taskService.performScheduledTask();
+    return { success: true, message: 'Cron job executed successfully' };
+  }
 }

@@ -27,8 +27,9 @@ export class BudgetsController {
   async editBudget(
     @Body()
     editBudgetDto: EditBudgetDto,
+    @Request() req,
   ): Promise<ResponseBase> {
-    return this.budgetsService.editBudgetById(editBudgetDto);
+    return this.budgetsService.updateBudget(req.user.id, editBudgetDto);
   }
 
   @UseGuards(AuthGuard)
