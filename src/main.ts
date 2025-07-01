@@ -8,25 +8,18 @@ import {
   FastifyAdapter,
   NestFastifyApplication,
 } from '@nestjs/platform-fastify';
-import pino from 'pino';
-
-const transport = pino.transport({
-  target: '@logtail/pino',
-  options: {
-    sourceToken: 'd264JAqQ2cm4xRMHF6cGZ9qt',
-    options: { endpoint: 'https://s1365228.eu-nbg-2.betterstackdata.com' },
-  },
-});
-
-const logger = pino(transport);
+import { setupRequestLogger } from './common/logger.middleware';
 
 async function bootstrap() {
-  const fastifyAdapter = new FastifyAdapter({ logger });
+  const fastifyAdapter = new FastifyAdapter({ logger: true });
 
   const app = await NestFactory.create<NestFastifyApplication>(
     AppModule,
     fastifyAdapter,
   );
+
+  setupRequestLogger(fastifyAdapter.getInstance());
+
   app.useStaticAssets({
     root: join(__dirname, '..', 'uploads'),
     prefix: '/uploads/',
