@@ -47,43 +47,41 @@ async function parseBody(req: FastifyRequest): Promise<any> {
 
 export function setupRequestLogger(app: FastifyInstance) {
   app.addHook('onRequest', async (req, res) => {
-    logger.info(`${req.method} ${req.url} Incoming request`, {
-      method: req.method,
-      url: req.url,
-      headers: JSON.stringify(req.headers),
-    });
+    logger.info(
+      {
+        method: req.method,
+        url: req.url,
+        headers: req.headers,
+      },
+      `${req.method} ${req.url} Incoming request`,
+    );
   });
 
   app.addHook('preHandler', async (req, res) => {
     try {
-      logger.info(`${req.method} ${req.url} request body`, {
-        body: JSON.stringify(req.body ?? '[empty]'),
-      });
+      logger.info(
+        {
+          body: req.body ?? '[empty]',
+        },
+        `${req.method} ${req.url} request body`,
+      );
     } catch (err) {
-      logger.error('Error logging body', { error: err.message });
+      logger.error({ error: err.message }, 'Error logging response');
     }
   });
 
   app.addHook('onSend', async (req, res, payload) => {
-    let responseText = '[unreadable]';
     try {
-      if (Buffer.isBuffer(payload)) responseText = payload.toString();
-      else if (typeof payload === 'object')
-        responseText = JSON.stringify(payload);
-      else if (typeof payload === 'string') responseText = payload;
+      logger.info(
+        {
+          statusCode: res.statusCode,
+          response: payload?.toString().slice(0, 1000),
+        },
+        `${req.method} ${req.url} response`,
+      );
     } catch (err) {
-      responseText = '[error parsing payload]';
+      logger.error({ error: err.message }, 'Error logging response');
     }
-
-    try {
-      logger.info(`${req.method} ${req.url} response`, {
-        statusCode: res.statusCode,
-        response: responseText.slice(0, 1000),
-      });
-    } catch (err) {
-      logger.error('Error logging response', { error: err.message });
-    }
-
     return payload;
   });
 }
