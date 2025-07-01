@@ -50,14 +50,14 @@ export function setupRequestLogger(app: FastifyInstance) {
     logger.info(`${req.method} ${req.url} Incoming request`, {
       method: req.method,
       url: req.url,
-      headers: req.headers,
+      headers: JSON.stringify(req.headers),
     });
   });
 
   app.addHook('preHandler', async (req, res) => {
     try {
       logger.info(`${req.method} ${req.url} request body`, {
-        body: req.body ?? '[empty]',
+        body: JSON.stringify(req.body ?? '[empty]'),
       });
     } catch (err) {
       logger.error('Error logging body', { error: err.message });
@@ -65,14 +65,25 @@ export function setupRequestLogger(app: FastifyInstance) {
   });
 
   app.addHook('onSend', async (req, res, payload) => {
+    let responseText = '[unreadable]';
+    try {
+      if (Buffer.isBuffer(payload)) responseText = payload.toString();
+      else if (typeof payload === 'object')
+        responseText = JSON.stringify(payload);
+      else if (typeof payload === 'string') responseText = payload;
+    } catch (err) {
+      responseText = '[error parsing payload]';
+    }
+
     try {
       logger.info(`${req.method} ${req.url} response`, {
         statusCode: res.statusCode,
-        response: payload?.toString().slice(0, 1000),
+        response: responseText.slice(0, 1000),
       });
     } catch (err) {
       logger.error('Error logging response', { error: err.message });
     }
+
     return payload;
   });
 }
