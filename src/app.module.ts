@@ -58,6 +58,6 @@ import { GroupModule } from './group/group.module';
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {
-    consumer.apply(LoggerMiddleware).forRoutes(CatsController);
+    consumer.apply(LoggerMiddleware).forRoutes('*');
   }
 }
