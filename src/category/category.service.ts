@@ -12,13 +12,13 @@ export class CategoryService {
     private categoryRepository: Repository<Category>,
   ) {}
 
-  async getCategoriesByUserId(userId: number): Promise<Category[]> {
+  async getCategoriesByUserId(userId: string): Promise<Category[]> {
     return this.categoryRepository.find({ where: { userId: userId } });
   }
 
   async createCategory(
     categoryDto: CategoryDto,
-    userId: number,
+    userId: string,
   ): Promise<ResponseBase> {
     const newCategory = this.categoryRepository.create({
       userId: userId,

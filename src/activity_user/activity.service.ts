@@ -29,7 +29,7 @@ export class ActivityService {
 
   async create(
     createActivityDto: CreateActivityDto,
-    userId: number,
+    userId: string,
   ): Promise<ResponseBase> {
     const { category, amount, type, note, icon, walletId, imageUrl } =
       createActivityDto;
@@ -340,7 +340,7 @@ export class ActivityService {
   }
 
   async getActivitiesByUserAndWallet(
-    userId: number,
+    userId: string,
     walletId: string,
   ): Promise<ResponseBase> {
     const query = await this.activityRepository.find({
@@ -359,7 +359,7 @@ export class ActivityService {
     };
   }
 
-  async getAll(id: number): Promise<Activity[]> {
+  async getAll(id: string): Promise<Activity[]> {
     return this.activityRepository.findBy({ userId: id });
   }
 }

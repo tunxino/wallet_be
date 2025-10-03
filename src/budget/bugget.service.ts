@@ -20,7 +20,7 @@ export class BudgetsService {
   ) {}
 
   async createBudget(
-    userId: number,
+    userId: string,
     createBudgetDto: CreateBudgetDto,
   ): Promise<ResponseBase> {
     const { amount, details } = createBudgetDto;
@@ -48,7 +48,7 @@ export class BudgetsService {
   }
 
   async updateBudget(
-    userId: number,
+    userId: string,
     updateBudgetDto: EditBudgetDto,
   ): Promise<ResponseBase> {
     const { id, amount, details } = updateBudgetDto;
@@ -106,7 +106,7 @@ export class BudgetsService {
   }
 
   async getBudgets(
-    userId: number,
+    userId: string,
     filterDto: FilterDto,
   ): Promise<ResponseBase> {
     const { startDate, endDate } = filterDto;

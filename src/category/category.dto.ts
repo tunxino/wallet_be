@@ -25,7 +25,7 @@ export class ReorderCategoriesDto {
 
   @IsNotEmpty()
   @IsString()
-  userId: number;
+  userId: string;
 
   @IsNotEmpty()
   @IsString()
