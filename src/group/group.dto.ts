@@ -11,8 +11,11 @@ import { Type } from 'class-transformer';
 export class CreateGroupDto {
   @IsNotEmpty()
   name: string;
-  @IsNotEmpty()
-  memberIds: number[];
+
+  @IsOptional()
+  @IsArray()
+  @IsNumber({}, { each: true })
+  memberIds?: number[];
 }
 
 export class InviteUserDto {

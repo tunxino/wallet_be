@@ -4,13 +4,13 @@ import {
   Entity,
   ManyToOne,
   OneToMany,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
 } from 'typeorm';
 import { User } from '../users/user.entity';
 
 @Entity()
 export class Group {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string;
 
   @Column()
@@ -25,7 +25,7 @@ export class Group {
 
 @Entity()
 export class GroupMember {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string;
 
   @ManyToOne(() => User, (user) => user.groupMembers, { eager: true })
@@ -40,7 +40,7 @@ export class GroupMember {
 
 @Entity()
 export class Expense {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string;
 
   @Column()
@@ -73,7 +73,7 @@ export class Expense {
 
 @Entity()
 export class ExpenseShare {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string;
 
   @ManyToOne(() => Expense, (expense) => expense.shares, {

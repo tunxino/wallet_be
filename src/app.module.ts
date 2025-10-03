@@ -36,9 +36,7 @@ import { GroupModule } from './group/group.module';
           synchronize: true, // Set to false in production
           logging: false, // Enable logging
           logger: 'advanced-console',
-          ssl: isSsl
-            ? { rejectUnauthorized: false } // Allow self-signed cert
-            : false, // Disable SSL if not required
+          ssl: false, // Disable SSL if not required
         };
       },
       inject: [ConfigService],

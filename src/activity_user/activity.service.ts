@@ -31,7 +31,7 @@ export class ActivityService {
     createActivityDto: CreateActivityDto,
     userId: number,
   ): Promise<ResponseBase> {
-    const { category, amount, type, date, note, icon, walletId, imageUrl } =
+    const { category, amount, type, note, icon, walletId, imageUrl } =
       createActivityDto;
     const amountNumber = Math.floor(Number(amount));
     const wallet = await this.walletRepository.findOne({
@@ -56,7 +56,6 @@ export class ActivityService {
     const newActivity = this.activityRepository.create({
       amount: amountNumber,
       type,
-      date,
       category,
       userId,
       note,
@@ -185,6 +184,8 @@ export class ActivityService {
     userId: string,
   ): Promise<ResponseBase> {
     const { startDate, endDate } = filterDto;
+    const start = filterDto.startOfDay;
+    const end = filterDto.endOfDay;
     let totalDepositResult: number = 0;
     let totalWithdrawResult: number = 0;
     // Build the query
@@ -193,11 +194,11 @@ export class ActivityService {
     if (userId) {
       query.andWhere('activity.userId = :userId', { userId });
     }
-    if (startDate) {
-      query.andWhere('activity.date >= :startDate', { startDate });
+    if (start) {
+      query.andWhere('activity.date >= :startDate', { start });
     }
-    if (endDate) {
-      query.andWhere('activity.date <= :endDate', { endDate });
+    if (end) {
+      query.andWhere('activity.date <= :endDate', { end });
     }
     query.orderBy('activity.date', 'DESC');
     const activitiesRaw = await query.getMany();

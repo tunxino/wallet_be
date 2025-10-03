@@ -53,7 +53,7 @@ export function setupRequestLogger(app: FastifyInstance) {
         url: req.url,
         headers: req.headers,
       },
-      `${req.method} ${req.url} Incoming request`,
+      `${req.method} ${req.url} header`,
     );
   });
 

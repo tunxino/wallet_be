@@ -1,15 +1,15 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
   CreateDateColumn,
   OneToMany,
+  PrimaryColumn,
 } from 'typeorm';
 import { GroupMember } from '../group/group.entity';
 
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: number;
 
   @Column()

@@ -34,9 +34,13 @@ export class GroupService {
 
     const group = this.groupRepository.create({ name });
 
-    // Tạo danh sách các thành viên (bao gồm cả creator và các user được thêm vào)
-    const uniqueUserIds = Array.from(new Set([creatorId, ...memberIds])); // Loại trùng nếu có
+    // Nếu memberIds không tồn tại hoặc rỗng, chỉ thêm creatorId
+    const uniqueUserIds = Array.from(
+      new Set([creatorId, ...(memberIds?.length ? memberIds : [])]),
+    );
+
     const users = await this.userRepository.findByIds(uniqueUserIds);
+
     const members: GroupMember[] = users.map((u) => {
       const gm = new GroupMember();
       gm.userId = u.id;

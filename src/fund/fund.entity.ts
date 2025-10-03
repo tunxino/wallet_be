@@ -1,16 +1,11 @@
-import {
-  Entity,
-  Column,
-  PrimaryGeneratedColumn,
-  CreateDateColumn,
-} from 'typeorm';
+import { Entity, Column, CreateDateColumn, PrimaryColumn } from 'typeorm';
 
 @Entity()
 export class FundEntity {
   @Column()
   userId: number;
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string;
 
   @Column()
@@ -22,7 +17,7 @@ export class FundEntity {
   @Column()
   currentAmount: number;
 
-  @Column({type:'double precision'})
+  @Column({ type: 'double precision' })
   amount: number;
 
   @Column({

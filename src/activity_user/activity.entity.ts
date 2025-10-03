@@ -1,20 +1,21 @@
 import {
   Entity,
   Column,
-  PrimaryGeneratedColumn,
+  PrimaryColumn,
   CreateDateColumn,
+  UpdateDateColumn,
 } from 'typeorm';
 
 @Entity()
 export class Activity {
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
+  id: string;
+
   @Column()
   userId: number;
 
   @Column()
   walletId: string;
-
-  @PrimaryGeneratedColumn('uuid')
-  id: string;
 
   @Column()
   walletType: string;
@@ -37,6 +38,9 @@ export class Activity {
   @Column({ nullable: true })
   imageUrl: string;
 
-  @CreateDateColumn({ type: 'timestamp' })
+  @CreateDateColumn({ type: 'timestamptz' })
   date: Date;
+
+  @UpdateDateColumn({ type: 'timestamptz' })
+  updateAt: Date;
 }

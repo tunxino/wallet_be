@@ -1,9 +1,9 @@
 // entities/notification.entity.ts
 import {
   Entity,
-  PrimaryGeneratedColumn,
   Column,
   CreateDateColumn,
+  PrimaryColumn,
 } from 'typeorm';
 
 export enum RepeatType {
@@ -16,7 +16,7 @@ export enum RepeatType {
 
 @Entity()
 export class Task {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string;
 
   @Column()

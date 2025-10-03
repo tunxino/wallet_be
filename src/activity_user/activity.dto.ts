@@ -6,7 +6,7 @@ import {
   IsOptional,
 } from 'class-validator';
 import { ActivityCategory, ActivityType } from './activity.enum';
-import { Type } from "class-transformer";
+import { Type } from 'class-transformer';
 
 export class CreateActivityDto {
   @IsString()
@@ -82,6 +82,18 @@ export class GetActivitiesByDateRangeDto {
   @IsOptional()
   @IsDateString()
   endDate?: string;
+
+  get startOfDay(): string | undefined {
+    return this.startDate
+      ? new Date(this.startDate).setHours(0, 0, 0, 0).toString()
+      : undefined;
+  }
+
+  get endOfDay(): string | undefined {
+    return this.endDate
+      ? new Date(this.endDate).setHours(23, 59, 59, 999).toString()
+      : undefined;
+  }
 }
 
 export class GetActivitiesChartDateRangeDto {

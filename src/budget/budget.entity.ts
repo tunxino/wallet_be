@@ -5,6 +5,7 @@ import {
   ManyToOne,
   OneToMany,
   BeforeInsert,
+  PrimaryColumn,
 } from 'typeorm';
 
 @Entity()
@@ -12,7 +13,7 @@ export class Budget {
   @Column()
   userId: number;
 
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string;
 
   @Column({ type: 'double precision' })
@@ -33,7 +34,7 @@ export class Budget {
 
 @Entity()
 export class BudgetDetail {
-  @PrimaryGeneratedColumn('uuid')
+  @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string; // A unique identifier for BudgetDetail
 
   @Column()
