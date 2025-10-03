@@ -35,7 +35,7 @@ export class GroupMember {
   group: Group;
 
   @Column()
-  userId: number;
+  userId: string;
 }
 
 @Entity()
@@ -82,7 +82,7 @@ export class ExpenseShare {
   expense: Expense;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @ManyToOne(() => User, { eager: true })
   user: User;

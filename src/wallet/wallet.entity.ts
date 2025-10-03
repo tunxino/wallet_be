@@ -7,7 +7,7 @@ export class Wallet {
   id: string;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column({ type: 'enum', enum: WalletType })
   type: string;

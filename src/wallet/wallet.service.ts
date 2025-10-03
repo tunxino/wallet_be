@@ -12,12 +12,12 @@ export class WalletService {
     private walletRepository: Repository<Wallet>,
   ) {}
 
-  async getWalletByUserID(userId: number): Promise<Wallet[]> {
+  async getWalletByUserID(userId: string): Promise<Wallet[]> {
     return this.walletRepository.find({ where: { userId: userId } });
   }
 
   async createWallet(
-    userId: number,
+    userId: string,
     walletDto: WalletDto,
   ): Promise<ResponseBase> {
     const walletAccount = this.walletRepository.create({
@@ -49,7 +49,7 @@ export class WalletService {
 
   async updateWallet(
     walletEditDto: WalletEditDto,
-    userId: number,
+    userId: string,
   ): Promise<ResponseBase> {
     const wallet = await this.walletRepository.findOneBy({
       id: walletEditDto.id,

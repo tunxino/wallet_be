@@ -7,7 +7,7 @@ export class Category {
   id: string;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
   category: string;

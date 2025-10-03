@@ -3,7 +3,7 @@ import { Entity, Column, CreateDateColumn, PrimaryColumn } from 'typeorm';
 @Entity()
 export class FundEntity {
   @Column()
-  userId: number;
+  userId: string;
 
   @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string;

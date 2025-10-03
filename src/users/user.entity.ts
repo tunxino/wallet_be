@@ -10,7 +10,7 @@ import { GroupMember } from '../group/group.entity';
 @Entity()
 export class User {
   @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
-  id: number;
+  id: string;
 
   @Column()
   name: string;

@@ -180,7 +180,7 @@ export class UsersService {
     });
   }
 
-  async findOneByID(id: number): Promise<ResponseBase> {
+  async findOneByID(id: string): Promise<ResponseBase> {
     const user = await this.usersRepository.findOne({ where: { id } });
     const categories = await this.categoryRepository.find({
       where: { userId: id },

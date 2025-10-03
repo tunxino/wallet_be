@@ -11,7 +11,7 @@ import {
 @Entity()
 export class Budget {
   @Column()
-  userId: number;
+  userId: string;
 
   @PrimaryColumn({ type: 'uuid', default: () => 'gen_random_uuid()' })
   id: string;

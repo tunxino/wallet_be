@@ -20,7 +20,7 @@ export class Task {
   id: string;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
   title: string;

@@ -18,7 +18,7 @@ export class TaskService {
     private usersService: UsersService,
   ) {}
 
-  async getTasks(userId: number): Promise<ResponseBase> {
+  async getTasks(userId: string): Promise<ResponseBase> {
     const tasks = await this.taskRepository.find({
       where: { userId },
       order: { scheduledAt: 'DESC' },
@@ -41,7 +41,7 @@ export class TaskService {
   }
 
   async scheduleNotification(
-    userId: number,
+    userId: string,
     createScheduledTaskDto: CreateScheduledTaskDto,
   ) {
     const notification = this.taskRepository.create({
@@ -68,47 +68,47 @@ export class TaskService {
 
     if (!notifications.length) return;
 
-    const userIds = [...new Set(notifications.map((n) => n.userId))];
-    const usersMap = new Map(
-      (await this.usersService.getManyByIds(userIds)).map((user) => [
-        user.id,
-        user,
-      ]),
-    );
+    // const userIds = [...new Set(notifications.map((n) => n.userId))];
+    // const usersMap = new Map(
+    //   (await this.usersService.getManyByIds(userIds)).map((user) => [
+    //     user.id,
+    //     user,
+    //   ]),
+    // );
 
     const toUpdate: Task[] = [];
 
-    await Promise.all(
-      notifications.map(async (item) => {
-        const user = usersMap.get(item.userId);
-        if (!user?.tokenFCM) return;
-
-        try {
-          await this.taskRepository.update(item.id, { processing: true });
-          await this.firebaseService.sendNotification(
-            user.tokenFCM,
-            item.title,
-            item.body,
-            { title: item.title, body: item.body },
-          );
-
-          if (item.repeat === RepeatType.NONE) {
-            item.sent = true;
-          } else {
-            item.scheduledAt = this.getNextScheduledDate(
-              item.scheduledAt,
-              item.repeat,
-            );
-          }
-
-          item.processing = false;
-          toUpdate.push(item);
-        } catch (err) {
-          console.error(`Failed to send notification ${item.id}`, err);
-          await this.taskRepository.update(item.id, { processing: false });
-        }
-      }),
-    );
+    // await Promise.all(
+    //   notifications.map(async (item) => {
+    //     const user = usersMap.get(item.userId);
+    //     if (!user?.tokenFCM) return;
+    //
+    //     try {
+    //       await this.taskRepository.update(item.id, { processing: true });
+    //       await this.firebaseService.sendNotification(
+    //         user.tokenFCM,
+    //         item.title,
+    //         item.body,
+    //         { title: item.title, body: item.body },
+    //       );
+    //
+    //       if (item.repeat === RepeatType.NONE) {
+    //         item.sent = true;
+    //       } else {
+    //         item.scheduledAt = this.getNextScheduledDate(
+    //           item.scheduledAt,
+    //           item.repeat,
+    //         );
+    //       }
+    //
+    //       item.processing = false;
+    //       toUpdate.push(item);
+    //     } catch (err) {
+    //       console.error(`Failed to send notification ${item.id}`, err);
+    //       await this.taskRepository.update(item.id, { processing: false });
+    //     }
+    //   }),
+    // );
 
     if (toUpdate.length) {
       await this.taskRepository.save(toUpdate);
@@ -148,47 +148,47 @@ export class TaskService {
 
     if (!notifications.length) return;
 
-    const userIds = [...new Set(notifications.map((n) => n.userId))];
-    const usersMap = new Map(
-      (await this.usersService.getManyByIds(userIds)).map((user) => [
-        user.id,
-        user,
-      ]),
-    );
+    // const userIds = [...new Set(notifications.map((n) => n.userId))];
+    // const usersMap = new Map(
+    //   (await this.usersService.getManyByIds(userIds)).map((user) => [
+    //     user.id,
+    //     user,
+    //   ]),
+    // );
 
     const toUpdate: Task[] = [];
 
-    await Promise.all(
-      notifications.map(async (item) => {
-        const user = usersMap.get(item.userId);
-        if (!user?.tokenFCM) return;
-
-        try {
-          await this.taskRepository.update(item.id, { processing: true });
-          await this.firebaseService.sendNotification(
-            user.tokenFCM,
-            item.title,
-            item.body,
-            { title: item.title, body: item.body },
-          );
-
-          if (item.repeat === RepeatType.NONE) {
-            item.sent = true;
-          } else {
-            item.scheduledAt = this.getNextScheduledDate(
-              item.scheduledAt,
-              item.repeat,
-            );
-          }
-
-          item.processing = false;
-          toUpdate.push(item);
-        } catch (err) {
-          console.error(`Failed to send notification ${item.id}`, err);
-          await this.taskRepository.update(item.id, { processing: false });
-        }
-      }),
-    );
+    // await Promise.all(
+    //   notifications.map(async (item) => {
+    //     const user = usersMap.get(item.userId);
+    //     if (!user?.tokenFCM) return;
+    //
+    //     try {
+    //       await this.taskRepository.update(item.id, { processing: true });
+    //       await this.firebaseService.sendNotification(
+    //         user.tokenFCM,
+    //         item.title,
+    //         item.body,
+    //         { title: item.title, body: item.body },
+    //       );
+    //
+    //       if (item.repeat === RepeatType.NONE) {
+    //         item.sent = true;
+    //       } else {
+    //         item.scheduledAt = this.getNextScheduledDate(
+    //           item.scheduledAt,
+    //           item.repeat,
+    //         );
+    //       }
+    //
+    //       item.processing = false;
+    //       toUpdate.push(item);
+    //     } catch (err) {
+    //       console.error(`Failed to send notification ${item.id}`, err);
+    //       await this.taskRepository.update(item.id, { processing: false });
+    //     }
+    //   }),
+    // );
 
     if (toUpdate.length) {
       await this.taskRepository.save(toUpdate);

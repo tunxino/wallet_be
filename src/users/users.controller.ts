@@ -6,6 +6,7 @@ import {
   Request,
   HttpStatus,
   UseGuards,
+  HttpCode,
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
@@ -29,6 +30,7 @@ export class UsersController {
   }
 
   @Post('register')
+  @HttpCode(HttpStatus.OK)
   create(@Body() user: Partial<User>): Promise<ResponseBase> {
     return this.usersService.create(user);
   }
@@ -39,12 +41,16 @@ export class UsersController {
   }
 
   @Post('register/google')
-  async createWithGoogle(@Body() socialLoginDto: SocialLoginDto): Promise<ResponseBase> {
+  async createWithGoogle(
+    @Body() socialLoginDto: SocialLoginDto,
+  ): Promise<ResponseBase> {
     return this.usersService.createWithGoogle(socialLoginDto);
   }
 
   @Post('register/facebook')
-  async createWithFacebook(@Body() socialLoginDto: SocialLoginDto): Promise<ResponseBase> {
+  async createWithFacebook(
+    @Body() socialLoginDto: SocialLoginDto,
+  ): Promise<ResponseBase> {
     return this.usersService.createWithFacebook(socialLoginDto);
   }
 

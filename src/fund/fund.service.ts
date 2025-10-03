@@ -12,7 +12,7 @@ export class FundService {
     private fundRepository: Repository<FundEntity>,
   ) {}
 
-  async create(fundDto: FundDto, userId: number): Promise<ResponseBase> {
+  async create(fundDto: FundDto, userId: string): Promise<ResponseBase> {
     const { title, status, amount, note, createDate, endDate } = fundDto;
 
     // Create a new activity entity with the provided data

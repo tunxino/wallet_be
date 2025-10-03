@@ -12,7 +12,7 @@ export class Activity {
   id: string;
 
   @Column()
-  userId: number;
+  userId: string;
 
   @Column()
   walletId: string;

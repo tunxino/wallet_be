@@ -22,20 +22,20 @@ export class GroupController {
   //   return (req.user as any).id;
   // }
 
-  @Post()
-  async createGroup(@Body() dto: CreateGroupDto, @Request() req) {
-    return this.groupService.createGroup(dto, req.user.id);
-  }
-
-  @Get('/search-users')
-  async searchUsers(@Query('keyword') keyword: string, @Request() req) {
-    return this.groupService.searchUsers(keyword, req.user.id);
-  }
-
-  @Post('/invite')
-  async inviteUser(@Body() dto: InviteUserDto) {
-    return this.groupService.inviteUserToGroup(dto);
-  }
+  // @Post()
+  // async createGroup(@Body() dto: CreateGroupDto, @Request() req) {
+  //   return this.groupService.createGroup(dto, req.user.id);
+  // }
+  //
+  // @Get('/search-users')
+  // async searchUsers(@Query('keyword') keyword: string, @Request() req) {
+  //   return this.groupService.searchUsers(keyword, req.user.id);
+  // }
+  //
+  // @Post('/invite')
+  // async inviteUser(@Body() dto: InviteUserDto) {
+  //   return this.groupService.inviteUserToGroup(dto);
+  // }
 
   //
   // @Post('/join')
@@ -46,23 +46,23 @@ export class GroupController {
   //   const userId = this.getUserId(req);
   //   return this.groupService.joinGroup(dto, userId);
   // }
-  @Get('/settle-summary')
-  getSettleSummary(@Param('groupId') groupId: string) {
-    return this.groupService.getSettleSummary(groupId);
-  }
-
-  @Get('/expenses')
-  getExpenses(@Param('groupId') groupId: string) {
-    return this.groupService.getExpensesByGroup(groupId);
-  }
-
-  @Post('/createExpense')
-  async createExpense(@Body() dto: CreateExpenseDto) {
-    return this.groupService.createExpense(dto);
-  }
-
-  @Get()
-  async getGroups(@Request() req) {
-    return this.groupService.getGroupsByUser(req.user.id);
-  }
+  // @Get('/settle-summary')
+  // getSettleSummary(@Param('groupId') groupId: string) {
+  //   return this.groupService.getSettleSummary(groupId);
+  // }
+  //
+  // @Get('/expenses')
+  // getExpenses(@Param('groupId') groupId: string) {
+  //   return this.groupService.getExpensesByGroup(groupId);
+  // }
+  //
+  // @Post('/createExpense')
+  // async createExpense(@Body() dto: CreateExpenseDto) {
+  //   return this.groupService.createExpense(dto);
+  // }
+  //
+  // @Get()
+  // async getGroups(@Request() req) {
+  //   return this.groupService.getGroupsByUser(req.user.id);
+  // }
 }
