@@ -10,7 +10,7 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
-import { ResponseBase, VerifyOtpDto } from './base.entity';
+import { ResponseBase, successResponse, VerifyOtpDto } from './base.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { SocialLoginDto } from './users.dto';
 
@@ -25,6 +25,7 @@ export class UsersController {
 
   @UseGuards(AuthGuard)
   @Post('getProfile')
+  @HttpCode(HttpStatus.OK)
   findOne(@Request() req): Promise<ResponseBase> {
     return this.usersService.findOneByID(req.user.id);
   }
@@ -36,11 +37,13 @@ export class UsersController {
   }
 
   @Post('delete')
+  @HttpCode(HttpStatus.OK)
   delete() {
     return this.usersService.delete();
   }
 
   @Post('register/google')
+  @HttpCode(HttpStatus.OK)
   async createWithGoogle(
     @Body() socialLoginDto: SocialLoginDto,
   ): Promise<ResponseBase> {
@@ -48,6 +51,7 @@ export class UsersController {
   }
 
   @Post('register/facebook')
+  @HttpCode(HttpStatus.OK)
   async createWithFacebook(
     @Body() socialLoginDto: SocialLoginDto,
   ): Promise<ResponseBase> {
@@ -55,14 +59,12 @@ export class UsersController {
   }
 
   @Post('verifyOTP')
+  @HttpCode(HttpStatus.OK)
   async verifyOtp(@Body() verifyOtpDto: VerifyOtpDto) {
     const { email, otp } = verifyOtpDto;
     const isVerified = await this.usersService.verifyOtp(email, otp);
     if (isVerified) {
-      return {
-        message: 'OTP verified successfully, login complete',
-        code: HttpStatus.OK,
-      };
+      return successResponse();
     }
     return { message: 'Invalid or expired OTP', code: HttpStatus.NOT_FOUND };
   }

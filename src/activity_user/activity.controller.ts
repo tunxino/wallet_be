@@ -17,7 +17,7 @@ import {
   UpdateActivityDto,
 } from './activity.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { ResponseBase } from '../users/base.entity';
+import { AuthenticatedRequest, ResponseBase } from '../users/base.entity';
 import { SupabaseService } from '../supabase/supabase.service';
 import {
   FileFieldsInterceptor,
@@ -80,7 +80,7 @@ export class ActivityController {
   @Post('getActivityByWalletId')
   async getActivityByWalletId(
     @Body() getWalletActivityDto: GetWalletActivityDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.activityService.getActivitiesByUserAndWallet(
       req.user.id,
@@ -92,7 +92,7 @@ export class ActivityController {
   @Post('getActivity')
   async getActivitiesByDateRange(
     @Body() filterDto: GetActivitiesByDateRangeDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.activityService.getActivitiesByDateRange(
       filterDto,
@@ -104,7 +104,7 @@ export class ActivityController {
   @Post('getByType')
   async getByType(
     @Body() filterDto: GetActivitiesChartDateRangeDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.activityService.getActivitiesChartDateRange(
       filterDto,
@@ -114,7 +114,7 @@ export class ActivityController {
 
   @UseGuards(AuthGuard)
   @Get()
-  async getAll(@Request() req) {
+  async getAll(@Request() req: AuthenticatedRequest) {
     return this.activityService.getAll(req.user.id);
   }
 }

@@ -208,7 +208,7 @@ export class UsersService {
     const userOld = await this.findOne(user.email);
     if (userOld) {
       return {
-        message: 'email are required.',
+        message: 'email already exists',
         code: HttpStatus.BAD_REQUEST,
       };
     }

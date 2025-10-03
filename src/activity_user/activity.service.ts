@@ -183,7 +183,7 @@ export class ActivityService {
     filterDto: GetActivitiesByDateRangeDto,
     userId: string,
   ): Promise<ResponseBase> {
-    const { startDate, endDate } = filterDto;
+    // const { startDate, endDate } = filterDto;
     const start = filterDto.startOfDay;
     const end = filterDto.endOfDay;
     let totalDepositResult: number = 0;
@@ -275,7 +275,7 @@ export class ActivityService {
 
   async getActivitiesChartDateRange(
     filterDto: GetActivitiesChartDateRangeDto,
-    userId: number,
+    userId: string,
   ): Promise<ResponseBase> {
     const { startDate, endDate, type } = filterDto;
     const baseQuery = this.activityRepository
