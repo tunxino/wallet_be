@@ -172,7 +172,7 @@ export class UsersService {
     return this.usersRepository.findOne({ where: { email } });
   }
 
-  async getManyByIds(userIds: number[]): Promise<User[]> {
+  async getManyByIds(userIds: string[]): Promise<User[]> {
     return this.usersRepository.find({
       where: {
         id: In(userIds),

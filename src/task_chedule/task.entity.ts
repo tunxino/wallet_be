@@ -1,10 +1,5 @@
 // entities/notification.entity.ts
-import {
-  Entity,
-  Column,
-  CreateDateColumn,
-  PrimaryColumn,
-} from 'typeorm';
+import { Entity, Column, CreateDateColumn, PrimaryColumn } from 'typeorm';
 
 export enum RepeatType {
   NONE = 'NONE',
