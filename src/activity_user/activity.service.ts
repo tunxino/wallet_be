@@ -131,6 +131,9 @@ export class ActivityService {
     if (updateActivityDto.date) {
       activity.date = updateActivityDto.date;
     }
+    if (updateActivityDto.note) {
+      activity.note = updateActivityDto.note;
+    }
     if (wallet.amount < 0) {
       return {
         message: 'Total amount not enough money!',
