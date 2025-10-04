@@ -195,12 +195,12 @@ export class ActivityService {
       query.andWhere('activity.userId = :userId', { userId });
     }
     if (start) {
-      query.andWhere('activity.date >= :startDate', { start });
+      query.andWhere('activity.updateAt >= :startDate', { start });
     }
     if (end) {
-      query.andWhere('activity.date <= :endDate', { end });
+      query.andWhere('activity.updateAt <= :endDate', { end });
     }
-    query.orderBy('activity.date', 'DESC');
+    query.orderBy('activity.updateAt', 'DESC');
     const activitiesRaw = await query.getMany();
     const activities = activitiesRaw.map((activity) => {
       const formattedDate = format(activity.date, 'yyyy-MM-dd');
