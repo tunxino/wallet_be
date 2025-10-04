@@ -18,17 +18,17 @@ import {
 } from './activity.dto';
 import { AuthGuard } from '../auth/auth.guard';
 import { AuthenticatedRequest, ResponseBase } from '../users/base.entity';
-import { SupabaseService } from '../supabase/supabase.service';
 import {
   FileFieldsInterceptor,
   UploadedFiles,
 } from '@blazity/nest-file-fastify';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Controller('activity')
 export class ActivityController {
   constructor(
     private readonly activityService: ActivityService,
-    private readonly supabaseService: SupabaseService,
+    private readonly cloudinaryService: CloudinaryService,
   ) {}
 
   @Post()
@@ -42,13 +42,12 @@ export class ActivityController {
     const file = files?.image?.[0];
 
     if (file) {
-      const imageUrl = await this.supabaseService.uploadFile({
+      const iconUrl = await this.cloudinaryService.uploadImage({
         buffer: file.buffer,
-        originalname: `${Date.now()}_image.png`,
         mimetype: file.mimetype,
-      } as Express.Multer.File);
+      });
 
-      createActivityDto.imageUrl = imageUrl;
+      createActivityDto.imageUrl = iconUrl;
     } else {
       createActivityDto.imageUrl = '';
     }

@@ -63,3 +63,16 @@ export const MESSAGES = {
   ADMIN_LOCK_USER_AND_DEVICE: 'Admin Lock User and all devices',
   VOLUME_ID_ALREADY_EXISTS: (id: string) => `Volume ID '${id}' already exists`,
 };
+
+export enum algorithmName {
+  AES_256_GCM = 'aes-256-gcm',
+  UTF8 = 'utf8',
+  BASE64 = 'base64',
+  SHA1 = 'sha1',
+}
+
+export const IMAGE_TYPE = 'image';
+export const ICON_TYPE = 'icon';
+export const DATA_NAME = 'data';
+export const MULTIPART = 'multipart/form-data';
+export const SUPPORT_ICON_LINK = 'support-icons';
