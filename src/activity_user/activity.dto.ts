@@ -82,20 +82,6 @@ export class GetActivitiesByDateRangeDto {
   @IsOptional()
   @IsDateString()
   endDate?: string;
-
-  get startOfDay(): string | undefined {
-    if (!this.startDate) return undefined;
-    const d = new Date(this.startDate);
-    d.setHours(0, 0, 0, 0);
-    return d.toISOString(); // ✅ Quan trọng
-  }
-
-  get endOfDay(): string | undefined {
-    if (!this.endDate) return undefined;
-    const d = new Date(this.endDate);
-    d.setHours(23, 59, 59, 999);
-    return d.toISOString(); // ✅ Quan trọng
-  }
 }
 
 export class GetActivitiesChartDateRangeDto {

@@ -183,9 +183,11 @@ export class ActivityService {
     filterDto: GetActivitiesByDateRangeDto,
     userId: string,
   ): Promise<ResponseBase> {
-    // const { startDate, endDate } = filterDto;
-    const start = filterDto.startOfDay;
-    const end = filterDto.endOfDay;
+    const { startDate, endDate } = filterDto;
+    const s = new Date(startDate);
+    const e = new Date(endDate);
+    s.setHours(0, 0, 0, 0);
+    e.setHours(23, 59, 59, 999);
     let totalDepositResult: number = 0;
     let totalWithdrawResult: number = 0;
     // Build the query
@@ -194,13 +196,17 @@ export class ActivityService {
     if (userId) {
       query.andWhere('activity.userId = :userId', { userId });
     }
-    if (start) {
-      query.andWhere('activity.updateAt >= :startDate', { start });
+    if (startDate) {
+      query.andWhere('activity.date >= :startDate', {
+        startDate: s.toLocaleString('sv-SE').replace(' ', 'T'),
+      });
     }
-    if (end) {
-      query.andWhere('activity.updateAt <= :endDate', { end });
+    if (endDate) {
+      query.andWhere('activity.date <= :endDate', {
+        endDate: e.toLocaleString('sv-SE').replace(' ', 'T'),
+      });
     }
-    query.orderBy('activity.updateAt', 'DESC');
+    query.orderBy('activity.date', 'DESC');
     const activitiesRaw = await query.getMany();
     const activities = activitiesRaw.map((activity) => {
       const formattedDate = format(activity.date, 'yyyy-MM-dd');
