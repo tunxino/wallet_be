@@ -353,8 +353,13 @@ export class ActivityService {
       where: { userId, walletId },
       order: { date: 'DESC' },
     });
+    // const formattedDate = format(activity.date, 'yyyy-MM-dd');
 
-    const activities = Object.values(query);
+    // const activities = Object.values(query);
+    const activities = query.map((activity) => ({
+      ...activity,
+      date: format(new Date(activity.date), 'yyyy-MM-dd'),
+    }));
 
     return {
       message: 'successfully',
