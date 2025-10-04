@@ -4,13 +4,13 @@ import { ActivityService } from './activity.service';
 import { ActivityController } from './activity.controller';
 import { Activity } from './activity.entity';
 import { Wallet } from '../wallet/wallet.entity';
-import { SupabaseService } from '../supabase/supabase.service';
 import { User } from '../users/user.entity';
 import { FirebaseModule } from '../firebase/firebase.module';
+import { CloudinaryService } from '../cloudinary/cloudinary.service';
 
 @Module({
   imports: [TypeOrmModule.forFeature([Activity, Wallet, User]), FirebaseModule],
-  providers: [ActivityService, SupabaseService],
+  providers: [ActivityService, CloudinaryService],
   controllers: [ActivityController],
   exports: [ActivityService],
 })
