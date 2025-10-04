@@ -84,15 +84,17 @@ export class GetActivitiesByDateRangeDto {
   endDate?: string;
 
   get startOfDay(): string | undefined {
-    return this.startDate
-      ? new Date(this.startDate).setHours(0, 0, 0, 0).toString()
-      : undefined;
+    if (!this.startDate) return undefined;
+    const d = new Date(this.startDate);
+    d.setHours(0, 0, 0, 0);
+    return d.toISOString(); // ✅ Quan trọng
   }
 
   get endOfDay(): string | undefined {
-    return this.endDate
-      ? new Date(this.endDate).setHours(23, 59, 59, 999).toString()
-      : undefined;
+    if (!this.endDate) return undefined;
+    const d = new Date(this.endDate);
+    d.setHours(23, 59, 59, 999);
+    return d.toISOString(); // ✅ Quan trọng
   }
 }
 
