@@ -6,6 +6,7 @@ echo "🚀 Start deploying Wallet app..."
 # 1️⃣ Chuyển đến thư mục project thật
 cd ~/wallet_be
 
+
 # 2️⃣ Pull code mới nhất từ main
 git fetch origin main
 git reset --hard origin/main
