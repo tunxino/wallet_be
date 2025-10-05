@@ -1,8 +1,6 @@
 import { MiddlewareConsumer, Module } from '@nestjs/common';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
-import { CatsController } from './controller/cats.controller';
-import { CatsService } from './controller/cats.service';
 import { LoggerMiddleware } from './common/logger.middleware';
 import { AuthModule } from './auth/auth.module';
 import { UsersModule } from './users/users.module';
@@ -51,8 +49,8 @@ import { GroupModule } from './group/group.module';
     TaskModule,
     GroupModule,
   ],
-  controllers: [AppController, CatsController],
-  providers: [AppService, CatsService],
+  controllers: [AppController],
+  providers: [AppService],
 })
 export class AppModule {
   configure(consumer: MiddlewareConsumer) {

@@ -59,9 +59,6 @@ export const MESSAGES = {
   LIMIT_FILE_UPLOAD: 'File size exceeds 1MB',
   NO_FILE_PROVIDED: 'No file provided',
   ACTIVITY_NOT_FOUND: 'Activity not found',
-  INVALID_HEADER_PLATFORM: 'Invalid platform header, must be IOS or MACOS',
-  ADMIN_LOCK_USER_AND_DEVICE: 'Admin Lock User and all devices',
-  VOLUME_ID_ALREADY_EXISTS: (id: string) => `Volume ID '${id}' already exists`,
 };
 
 export enum algorithmName {
