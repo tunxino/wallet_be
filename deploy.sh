@@ -4,8 +4,12 @@ set -e
 echo "🚀 Start deploying Wallet app..."
 
 # 1️⃣ Chuyển đến thư mục project thật
-cd ~/wallet_be
+cd "$(pwd)"
 
+if [ ! -d .git ]; then
+  echo "🔍 Repo chưa có, cloning..."
+  git clone https://github.com/tunxino/wallet_be.git
+fi
 
 # 2️⃣ Pull code mới nhất từ main
 git fetch origin main
