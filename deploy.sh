@@ -3,6 +3,10 @@ set -e
 
 echo "🚀 Start deploying Wallet app..."
 
+# Load nvm để Node & npm có sẵn
+export NVM_DIR="$HOME/.nvm"
+[ -s "$NVM_DIR/nvm.sh" ] && \. "$NVM_DIR/nvm.sh"
+
 # 1️⃣ Chuyển đến thư mục project thật
 cd "$(pwd)"
 
