@@ -1,5 +1,3 @@
-// src/budgets/budgets.controller.ts
-
 import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { BudgetsService } from './bugget.service';
 
