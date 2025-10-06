@@ -27,8 +27,6 @@ pipeline {
          steps {
            echo "🏗️ Building NestJS project..."
            sh '''
-             export PATH=$PATH:/root/.nvm/versions/node/v22.20.0/bin
-             npm install -g @nestjs/cli
              npm run build
            '''
          }
