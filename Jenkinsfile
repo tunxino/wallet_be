@@ -23,20 +23,22 @@ pipeline {
       }
     }
 
-   stage('Build Project') {
-         steps {
-           echo "🏗️ Building NestJS project..."
-           sh '''
-            npx nest build
-           '''
-         }
-       }
+  stage('Build Project') {
+    steps {
+      echo '🏗️ Building NestJS project...'
+      sh '''
+        export PATH=$PATH:$(pwd)/node_modules/.bin
+        npx nest build
+      '''
+    }
+  }
+
 
    stage('Deploy') {
          steps {
            echo "🚀 Deploying"
            sh '''
-             export PATH=$PATH:/root/.nvm/versions/node/v22.20.0/bin
+             export PATH=$PATH:$(pwd)/node_modules/.bin
              if pm2 describe wallet_be > /dev/null; then
                echo "♻️ Reloading existing PM2 process..."
                pm2 reload wallet_be
