@@ -27,9 +27,7 @@ pipeline {
     steps {
       echo '🏗️ Building NestJS project...'
       sh '''
-        export PATH=$PATH:$(pwd)/node_modules/.bin
-
-
+        export PATH=$PATH:/root/.nvm/versions/node/v22.20.0/bin
         npm run build
       '''
     }
@@ -40,7 +38,7 @@ pipeline {
          steps {
            echo "🚀 Deploying"
            sh '''
-             export PATH=$PATH:$(pwd)/node_modules/.bin
+             export PATH=$PATH:/root/.nvm/versions/node/v22.20.0/bin
              if pm2 describe wallet_be > /dev/null; then
                echo "♻️ Reloading existing PM2 process..."
                pm2 reload wallet_be
