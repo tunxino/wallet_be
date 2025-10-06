@@ -26,6 +26,7 @@ pipeline {
     steps {
       echo '🏗️ Building NestJS project...'
       sh '''
+        npm install --no-save @nestjs/cli
         npm run build
       '''
     }
