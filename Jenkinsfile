@@ -27,7 +27,7 @@ pipeline {
          steps {
            echo "🏗️ Building NestJS project..."
            sh '''
-             npm run build
+            npx nest build
            '''
          }
        }
