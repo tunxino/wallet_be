@@ -36,13 +36,7 @@ pipeline {
              steps {
                echo "🚀 Deploying"
                sh '''
-                 if pm2 describe wallet_be > /dev/null; then
-                   echo "♻️ Reloading existing PM2 process..."
-                   pm2 reload wallet_be
-                 else
-                   echo "🚀 Starting new PM2 process..."
-                   pm2 start dist/main.js --name wallet_be
-                 fi
+                 pm2 reload wallet_be
                  pm2 save
                '''
              }
