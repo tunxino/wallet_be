@@ -3,7 +3,7 @@ import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
 import { WalletService } from './wallet.service';
 import { Wallet } from './wallet.entity';
-import { ResponseBase } from '../users/base.entity';
+import { AuthenticatedRequest, ResponseBase } from '../users/base.entity';
 import { WalletDto, WalletEditDto } from './wallet.dto';
 
 @Controller('wallet')
@@ -12,7 +12,9 @@ export class WalletController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async getWalletByUserId(@Request() req): Promise<Wallet[]> {
+  async getWalletByUserId(
+    @Request() req: AuthenticatedRequest,
+  ): Promise<Wallet[]> {
     return this.walletService.getWalletByUserID(req.user.id);
   }
 
@@ -20,7 +22,7 @@ export class WalletController {
   @Post('create')
   async createWallet(
     @Body() walletDto: WalletDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.walletService.createWallet(req.user.id, walletDto);
   }
@@ -29,7 +31,7 @@ export class WalletController {
   @Post('update')
   async updateWallet(
     @Body() walletEditDto: WalletEditDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.walletService.updateWallet(walletEditDto, req.user.id);
   }

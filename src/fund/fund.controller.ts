@@ -1,6 +1,6 @@
 import { Controller, Post, Body, UseGuards, Request } from '@nestjs/common';
 import { AuthGuard } from '../auth/auth.guard';
-import { ResponseBase } from '../users/base.entity';
+import { AuthenticatedRequest, ResponseBase } from '../users/base.entity';
 import { FundService } from './fund.service';
 import { FundDto } from './fund.dto';
 
@@ -13,7 +13,7 @@ export class FundController {
   @Post()
   async create(
     @Body() fundDto: FundDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.fundService.create(fundDto, req.user.id);
   }

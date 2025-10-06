@@ -41,7 +41,7 @@ export class ActivityController {
   async create(
     @Body() createActivityDto: CreateActivityDto,
     @UploadedFiles() files: Record<string, UploadedFile[]>,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     const file = files?.image?.[0];
 

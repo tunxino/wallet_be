@@ -9,7 +9,7 @@ import {
 import { CreateScheduledTaskDto, DeleteScheduledTaskDto } from './tast.dto';
 import { TaskService } from './task.service';
 import { AuthGuard } from '../auth/auth.guard';
-import { ResponseBase } from '../users/base.entity';
+import { AuthenticatedRequest, ResponseBase } from '../users/base.entity';
 import { CronApiKeyGuard } from './cron-api-key.guard';
 
 @Controller('task')
@@ -20,7 +20,7 @@ export class TaskController {
   @Post('schedule')
   async scheduleNotification(
     @Body() createScheduledTaskDto: CreateScheduledTaskDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ) {
     return this.taskService.scheduleNotification(
       req.user.id,
@@ -30,7 +30,7 @@ export class TaskController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async getTasks(@Request() req): Promise<ResponseBase> {
+  async getTasks(@Request() req: AuthenticatedRequest): Promise<ResponseBase> {
     return this.taskService.getTasks(req.user.id);
   }
 

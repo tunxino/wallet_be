@@ -10,7 +10,12 @@ import {
 } from '@nestjs/common';
 import { UsersService } from './users.service';
 import { User } from './user.entity';
-import { ResponseBase, successResponse, VerifyOtpDto } from './base.entity';
+import {
+  AuthenticatedRequest,
+  ResponseBase,
+  successResponse,
+  VerifyOtpDto,
+} from './base.entity';
 import { AuthGuard } from '../auth/auth.guard';
 import { SocialLoginDto } from './users.dto';
 
@@ -26,7 +31,7 @@ export class UsersController {
   @UseGuards(AuthGuard)
   @Post('getProfile')
   @HttpCode(HttpStatus.OK)
-  findOne(@Request() req): Promise<ResponseBase> {
+  findOne(@Request() req: AuthenticatedRequest): Promise<ResponseBase> {
     return this.usersService.findOneByID(req.user.id);
   }
 

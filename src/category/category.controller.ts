@@ -1,16 +1,10 @@
-import {
-  Body,
-  Controller,
-  Post,
-  Request,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Post, Request, UseGuards } from '@nestjs/common';
 // import { LoggingInterceptor } from '../common/logging.interceptor';
 
 import { CategoryService } from './category.service';
 import { AuthGuard } from '../auth/auth.guard';
 import { Category } from './category.entity';
-import { ResponseBase } from '../users/base.entity';
+import { AuthenticatedRequest, ResponseBase } from '../users/base.entity';
 import {
   CategoryDto,
   DeleteCategoriesDto,
@@ -23,7 +17,9 @@ export class CategoryController {
 
   @UseGuards(AuthGuard)
   @Post()
-  async getCategoriesByUserId(@Request() req): Promise<Category[]> {
+  async getCategoriesByUserId(
+    @Request() req: AuthenticatedRequest,
+  ): Promise<Category[]> {
     return this.categoryService.getCategoriesByUserId(req.user.id);
   }
 
@@ -31,7 +27,7 @@ export class CategoryController {
   @Post('create')
   async createCategory(
     @Body() categoryDto: CategoryDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.categoryService.createCategory(categoryDto, req.user.id);
   }

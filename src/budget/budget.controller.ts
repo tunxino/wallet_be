@@ -3,7 +3,7 @@ import { BudgetsService } from './bugget.service';
 
 import { CreateBudgetDto, EditBudgetDto } from './budget.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { ResponseBase } from '../users/base.entity';
+import { AuthenticatedRequest, ResponseBase } from '../users/base.entity';
 import { FilterDto } from '../activity_user/activity.dto';
 
 @Controller('budgets')
@@ -15,7 +15,7 @@ export class BudgetsController {
   async createBudget(
     @Body()
     createBudgetDto: CreateBudgetDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.budgetsService.createBudget(req.user.id, createBudgetDto);
   }
@@ -25,7 +25,7 @@ export class BudgetsController {
   async editBudget(
     @Body()
     editBudgetDto: EditBudgetDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.budgetsService.updateBudget(req.user.id, editBudgetDto);
   }
@@ -34,7 +34,7 @@ export class BudgetsController {
   @Post('getBudgets')
   async getAllBudgets(
     @Body() filterDto: FilterDto,
-    @Request() req,
+    @Request() req: AuthenticatedRequest,
   ): Promise<ResponseBase> {
     return this.budgetsService.getBudgets(req.user.id, filterDto);
   }
