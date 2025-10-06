@@ -3,7 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Budget, BudgetDetail } from './budget.entity';
 import { CreateBudgetDto, EditBudgetDto } from './budget.dto';
-import { ResponseBase } from '../users/base.entity';
+import { ResponseBase, successResponse } from '../users/base.entity';
 import { Activity } from '../activity_user/activity.entity';
 import { FilterDto } from '../activity_user/activity.dto';
 import { v4 as uuidv4 } from 'uuid';
@@ -41,10 +41,7 @@ export class BudgetsService {
 
     await this.budgetRepository.save(budget);
     await this.budgetDetailRepository.save(budget.details);
-    return {
-      message: `Budget created successfully.`,
-      code: HttpStatus.CREATED,
-    };
+    return successResponse();
   }
 
   async updateBudget(
@@ -99,10 +96,7 @@ export class BudgetsService {
 
     await this.budgetRepository.save(budget); // Cascade sẽ lưu detail
 
-    return {
-      message: 'Budget updated successfully.',
-      code: HttpStatus.OK,
-    };
+    return successResponse();
   }
 
   async getBudgets(

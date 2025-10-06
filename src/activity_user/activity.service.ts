@@ -1,6 +1,6 @@
 import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository, Between } from 'typeorm';
+import { Repository } from 'typeorm';
 import { Activity } from './activity.entity';
 import {
   CreateActivityDto,
@@ -8,7 +8,7 @@ import {
   GetActivitiesChartDateRangeDto,
   UpdateActivityDto,
 } from './activity.dto';
-import { ResponseBase } from '../users/base.entity';
+import { ResponseBase, successResponse } from '../users/base.entity';
 import { ActivityType } from './activity.enum';
 import { Wallet } from '../wallet/wallet.entity';
 import { User } from '../users/user.entity';
@@ -89,10 +89,7 @@ export class ActivityService {
         });
     }
 
-    return {
-      message: 'User created successfully',
-      code: HttpStatus.CREATED,
-    };
+    return successResponse();
   }
 
   async update(updateActivityDto: UpdateActivityDto): Promise<ResponseBase> {
@@ -142,10 +139,7 @@ export class ActivityService {
     }
     await this.walletRepository.save(wallet);
     await this.activityRepository.save(activity);
-    return {
-      message: 'User edited successfully',
-      code: HttpStatus.CREATED,
-    };
+    return successResponse();
   }
 
   async delete(id: string): Promise<ResponseBase> {
@@ -176,10 +170,7 @@ export class ActivityService {
     }
     await this.walletRepository.save(wallet);
     await this.activityRepository.remove(activity);
-    return {
-      message: 'User delete successfully',
-      code: HttpStatus.CREATED,
-    };
+    return successResponse();
   }
 
   async getActivitiesByDateRange(

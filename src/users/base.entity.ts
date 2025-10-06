@@ -30,3 +30,10 @@ export interface AuthenticatedRequest extends FastifyRequest {
     id: string;
   };
 }
+
+export interface UploadedFile {
+  buffer: Buffer;
+  mimetype: string;
+  fieldname: string;
+  size: number;
+}

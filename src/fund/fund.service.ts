@@ -1,7 +1,7 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
-import { ResponseBase } from '../users/base.entity';
+import { ResponseBase, successResponse } from '../users/base.entity';
 import { FundEntity } from './fund.entity';
 import { FundDto } from './fund.dto';
 
@@ -28,9 +28,6 @@ export class FundService {
 
     // Save the new activity entity to the database
     await this.fundRepository.save(newActivity);
-    return {
-      message: 'User created successfully',
-      code: HttpStatus.CREATED,
-    };
+    return successResponse();
   }
 }

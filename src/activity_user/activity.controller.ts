@@ -17,7 +17,11 @@ import {
   UpdateActivityDto,
 } from './activity.dto';
 import { AuthGuard } from '../auth/auth.guard';
-import { AuthenticatedRequest, ResponseBase } from '../users/base.entity';
+import {
+  AuthenticatedRequest,
+  ResponseBase,
+  UploadedFile,
+} from '../users/base.entity';
 import {
   FileFieldsInterceptor,
   UploadedFiles,
@@ -116,11 +120,4 @@ export class ActivityController {
   async getAll(@Request() req: AuthenticatedRequest) {
     return this.activityService.getAll(req.user.id);
   }
-}
-
-interface UploadedFile {
-  buffer: Buffer;
-  mimetype: string;
-  fieldname: string;
-  size: number;
 }

@@ -1,8 +1,8 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Category } from './category.entity';
-import { ResponseBase } from '../users/base.entity';
+import { ResponseBase, successResponse } from '../users/base.entity';
 import { CategoryDto, ReorderCategoriesDto } from './category.dto';
 
 @Injectable()
@@ -29,10 +29,7 @@ export class CategoryService {
     });
     await this.categoryRepository.save(newCategory);
 
-    return {
-      message: 'Create Category successfully',
-      code: HttpStatus.CREATED,
-    };
+    return successResponse();
   }
 
   async reorderCategories(
@@ -47,18 +44,12 @@ export class CategoryService {
         icon: categoryData.icon,
       });
     }
-    return {
-      message: 'Reorder Categories successfully',
-      code: HttpStatus.ACCEPTED,
-    }; // Return the updated list of categories
+    return successResponse();
   }
 
   async deleteById(id: string): Promise<ResponseBase> {
     await this.categoryRepository.delete({ id: id });
 
-    return {
-      message: 'delete Categories',
-      code: HttpStatus.ACCEPTED,
-    };
+    return successResponse();
   }
 }
