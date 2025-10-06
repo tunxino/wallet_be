@@ -1,4 +1,4 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { Cron, CronExpression } from '@nestjs/schedule';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository, LessThanOrEqual } from 'typeorm';
@@ -7,7 +7,7 @@ import { RepeatType, Task } from './task.entity';
 import { CreateScheduledTaskDto } from './tast.dto';
 import { FirebaseService } from '../firebase/firebase.service';
 import { UsersService } from '../users/users.service';
-import { ResponseBase } from '../users/base.entity'; // bạn sẽ tạo sau
+import { ResponseBase, successResponse } from '../users/base.entity';
 
 @Injectable()
 export class TaskService {
@@ -24,20 +24,13 @@ export class TaskService {
       order: { scheduledAt: 'DESC' },
     });
 
-    return {
-      message: 'successfully',
-      code: HttpStatus.OK,
-      data: tasks,
-    };
+    return successResponse(tasks);
   }
 
   async deleteTasks(id: string): Promise<ResponseBase> {
     await this.taskRepository.delete(id);
 
-    return {
-      message: 'successfully',
-      code: HttpStatus.OK,
-    };
+    return successResponse();
   }
 
   async scheduleNotification(
