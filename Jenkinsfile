@@ -30,22 +30,23 @@ pipeline {
       }
     }
 
-    stage('Deploy') {
-      steps {
-        echo "🚀 Deploying with PM2..."
-        sh '''
-          if pm2 describe wallet_be > /dev/null; then
-            echo "♻️ Reloading existing PM2 process..."
-            pm2 reload wallet_be
-          else
-            echo "🚀 Starting new PM2 process..."
-            pm2 start dist/main.js --name wallet_be
-          fi
-          pm2 save
-        '''
-      }
-    }
-  }
+   stage('Deploy') {
+         steps {
+           echo "🚀 Deploying"
+           sh '''
+             export PATH=$PATH:/root/.nvm/versions/node/v22.20.0/bin
+             if pm2 describe wallet_be > /dev/null; then
+               echo "♻️ Reloading existing PM2 process..."
+               pm2 reload wallet_be
+             else
+               echo "🚀 Starting new PM2 process..."
+               pm2 start dist/main.js --name wallet_be
+             fi
+             pm2 save
+           '''
+         }
+       }
+     }
 
   post {
     success {
