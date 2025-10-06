@@ -10,7 +10,7 @@ pipeline {
 
         stage('Checkout Code') {
           steps {
-            echo "📦 Cloning repository..."
+            echo "📍 Cloning repository..."
             git branch: 'main', url: 'https://github.com/tunxino/wallet_be.git'
           }
         }
@@ -24,7 +24,7 @@ pipeline {
 
       stage('Build Project') {
             steps {
-              echo '🏗️ Building NestJS project...'
+              echo '⚙️️ Building NestJS project...'
               sh '''
                 npm run build
               '''
