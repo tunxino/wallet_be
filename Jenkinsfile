@@ -28,7 +28,7 @@ pipeline {
       echo '🏗️ Building NestJS project...'
       sh '''
         export PATH=$PATH:$(pwd)/node_modules/.bin
-        npx nest build
+        npm nest build
       '''
     }
   }
