@@ -26,11 +26,7 @@ pipeline {
         steps {
           echo '🏗️ Building NestJS project...'
           sh '''
-            npm install --no-save @nestjs/cli
-            export PATH=$(pwd)/node_modules/.bin:$PATH
-            echo "PATH after export: $PATH"
-            which nest || echo "⚠️ Nest CLI not found in PATH"
-            npm run build
+            nest build
           '''
         }
       }
