@@ -10,8 +10,17 @@ pipeline {
 
         stage('Checkout Code') {
           steps {
-            echo "📍 Cloning repository..."
-            git branch: 'main', url: 'https://github.com/tunxino/wallet_be.git'
+            echo "📍 Updating code..."
+            sh '''
+              if [ -d .git ]; then
+                echo "🔄 Pulling latest changes..."
+                git fetch origin main
+                git reset --hard origin/main
+              else
+                echo "📥 Cloning repository for the first time..."
+                git clone -b main https://github.com/tunxino/wallet_be.git .
+              fi
+            '''
           }
         }
 
