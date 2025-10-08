@@ -7,10 +7,9 @@ pipeline {
   }
 
   stages {
-
         stage('Checkout Code') {
           steps {
-            echo "📍 Updating code..."
+            echo "📍Updating code..."
             sh '''
               if [ -d .git ]; then
                 echo "🔄 Pulling latest changes..."
