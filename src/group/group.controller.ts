@@ -18,11 +18,6 @@ import { CreateExpenseDto, CreateGroupDto, InviteUserDto } from './group.dto';
 export class GroupController {
   constructor(private readonly groupService: GroupService) {}
 
-  // Lấy thông tin user hiện tại từ token
-  // private getUserId(req: Request): string {
-  //   return (req.user as any).id;
-  // }
-
   @Post()
   async createGroup(@Body() dto: CreateGroupDto, @Request() req) {
     return this.groupService.createGroup(dto, req.user.id);

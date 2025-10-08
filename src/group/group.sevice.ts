@@ -29,7 +29,7 @@ export class GroupService {
 
   async createGroup(
     dto: CreateGroupDto,
-    creatorId: number,
+    creatorId: string,
   ): Promise<ResponseBase> {
     const { name, memberIds } = dto;
 

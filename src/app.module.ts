@@ -31,7 +31,7 @@ import { GroupModule } from './group/group.module';
           password: configService.get('DATABASE_PASSWORD'),
           database: configService.get('DATABASE_NAME'),
           entities: [__dirname + '/**/*.entity{.ts,.js}'],
-          synchronize: true, // Set to false in production
+          synchronize: false, // Set to false in production
           logging: false, // Enable logging
           logger: 'advanced-console',
           ssl: false, // Disable SSL if not required
