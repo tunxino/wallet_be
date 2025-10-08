@@ -3,7 +3,7 @@ export function generatePassword(
   includeUppercase: boolean = true,
   includeLowercase: boolean = true,
   includeNumbers: boolean = true,
-  includeSpecialChars: boolean = true
+  includeSpecialChars: boolean = true,
 ): string {
   const uppercaseChars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZ';
   const lowercaseChars = 'abcdefghijklmnopqrstuvwxyz';

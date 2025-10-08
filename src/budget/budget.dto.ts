@@ -21,8 +21,8 @@ export class CreateBudgetDto {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateBudgetDetailDto) // Use CreateBudgetDetailDto for each item in the array
-  details: CreateBudgetDetailDto[]; // List of BudgetDetail objects
+  @Type(() => CreateBudgetDetailDto)
+  details: CreateBudgetDetailDto[];
 }
 
 export class EditBudgetDto {
@@ -30,10 +30,10 @@ export class EditBudgetDto {
   id: string;
 
   @IsNumber()
-  amount: number; // The total amount for the budget
+  amount: number;
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => CreateBudgetDetailDto) // Use CreateBudgetDetailDto for each item in the array
-  details: CreateBudgetDetailDto[]; // List of BudgetDetail objects
+  @Type(() => CreateBudgetDetailDto)
+  details: CreateBudgetDetailDto[];
 }

@@ -15,14 +15,14 @@ export class CreateGroupDto {
   @IsOptional()
   @IsArray()
   @IsNumber({}, { each: true })
-  memberIds?: number[];
+  memberIds?: string[];
 }
 
 export class InviteUserDto {
   @IsNotEmpty()
   groupId: string;
   @IsNotEmpty()
-  userId: number;
+  userId: string;
 }
 
 export class CreateExpenseDto {
@@ -44,7 +44,7 @@ export class CreateExpenseDto {
 
   @IsNotEmpty()
   @IsNumber()
-  payerId: number;
+  payerId: string;
 
   @IsArray()
   @ValidateNested({ each: true })
@@ -54,7 +54,7 @@ export class CreateExpenseDto {
 
 export class ExpenseShareInput {
   @IsNumber()
-  userId: number;
+  userId: string;
 
   @IsOptional()
   @IsNumber()
