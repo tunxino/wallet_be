@@ -43,20 +43,24 @@ pipeline {
        stage('Deploy') {
              steps {
                echo "🚀 Deploying"
-                sh '''
-                            export PATH=$PATH:/root/.nvm/versions/node/v22.20.0/bin
-                            export PM2_HOME=/root/.pm2
-                            echo "Using PM2 from: $(which pm2)"
-                            pm2 list
-                            if pm2 describe wallet_be > /dev/null; then
-                              echo "♻️ Reloading existing PM2 process..."
-                              pm2 reload wallet_be
-                            else
-                              echo "🚀 Starting new PM2 process..."
-                              pm2 start dist/main.js --name wallet_be
-                            fi
-                            pm2 save
-                          '''
+         sh '''
+               export PATH=/root/.nvm/versions/node/v22.20.0/bin:$PATH
+               echo "Using PM2 from: $(which pm2)"
+
+               sudo mkdir -p /root/.pm2
+               sudo chown -R jenkins:jenkins /root/.pm2
+
+               export PM2_HOME=/root/.pm2
+
+               if sudo pm2 describe wallet_be > /dev/null; then
+                 echo "♻️ Reloading existing PM2 process..."
+                 sudo pm2 reload wallet_be
+               else
+                 echo "🚀 Starting new PM2 process..."
+                 sudo pm2 start dist/main.js --name wallet_be
+               fi
+               sudo pm2 save
+             '''
              }
            }
          }
