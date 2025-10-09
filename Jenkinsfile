@@ -40,26 +40,35 @@ pipeline {
           }
 
 
-       stage('Deploy') {
-             steps {
-               echo "🚀 Deploying"
-         sh '''
-               echo "Using PM2 from: $(which pm2)"
+      stage('Deploy') {
+        steps {
+          echo "🚀 Deploying"
 
-                     mkdir -p ~/.pm2
+          // Lấy mật khẩu từ Jenkins credentials
+          withCredentials([string(credentialsId: 'ROOT_PASSWORD', variable: 'SUDO_PASS')]) {
+            sh '''
+              echo "Using PM2 from: $(which pm2)"
 
-                     if pm2 describe wallet_be > /dev/null; then
-                       echo "♻️ Reloading existing PM2 process..."
-                       pm2 reload wallet_be
-                     else
-                       echo "🚀 Starting new PM2 process..."
-                       pm2 start dist/main.js --name wallet_be
-                     fi
+              # Dùng sudo có mật khẩu từ Jenkins credentials
+              echo $SUDO_PASS | sudo -S mkdir -p /root/.pm2
 
-                     pm2 save
-             '''
-             }
-           }
+              if pm2 describe wallet_be > /dev/null; then
+                echo "♻️ Reloading existing PM2 process..."
+                echo $SUDO_PASS | sudo -S pm2 reload wallet_be
+              else
+                echo "🚀 Starting new PM2 process..."
+                echo $SUDO_PASS | sudo -S pm2 start dist/main.js --name wallet_be
+              fi
+
+              echo $SUDO_PASS | sudo -S pm2 save
+            '''
+          }
+        }
+      }
+
+
+
+
          }
 
   post {
