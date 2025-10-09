@@ -11,6 +11,7 @@ pipeline {
           steps {
             echo "📍Updating code..."
             sh '''
+              cd wallet_be
               if [ -d .git ]; then
                 echo "🔄 Pulling latest changes..."
                 git fetch origin main
